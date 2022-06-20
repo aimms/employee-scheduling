@@ -1,267 +1,418 @@
 ## ams_version=1.0
 
 Model Main_EmployeeAssignment {
-    Comment: {
-        "Keywords:
-        Employee assignment problem, scheduling."
-    }
-    Section Model_Formulation {
-        DeclarationSection Model_Declaration {
-            Set Restaurants {
-                Index: r;
-                Parameter: SelectedRestaurant;
-                OrderBy: r;
-            }
-            Set Employees {
-                Index: e;
-                Parameter: SelectedEmployee;
-            }
-            Set Shifts {
-                Index: sh;
-                Parameter: SelectedShift;
-            }
-            Set Skills {
-                Index: sk;
-                Parameter: SelectedSkill;
-            }
-            Parameter Demand {
-                IndexDomain: (r,sh,sk);
-                Text: "The needed number of skilled employees in the restaurants";
-            }
-            Parameter EmployeeHasSkill {
-                IndexDomain: (e,sk);
-                Text: "Employees\' skills";
-                Range: binary;
-            }
-            Parameter EmployeeSkillPreference {
-                IndexDomain: (e,sk)|EmployeeHasSkill(e,sk);
-                Text: "Job preferences of the employees (lower number means preferred position)";
-            }
-            Parameter EmployeeDoesShift {
-                IndexDomain: (e,sh);
-                Text: "Employees\' availability for shifts";
-                Range: binary;
-            }
-            Variable Assignment {
-                IndexDomain: (r,e,sh,sk);
-                Text: "Employees\' work schedule";
-                Range: binary;
-            }
-            Variable Unfulfilled {
-                IndexDomain: (r,sh,sk);
-                Text: "Unfulfilled positions";
-                Range: nonnegative;
-            }
-            Constraint SatisfyDemand {
-                IndexDomain: (r,sh,sk);
-                Text: "The number of assigned employees has to be equal to the needed number of employees minus the unfulfilled positions ";
-                Definition: sum(e, Assignment(r,e,sh,sk)) = Demand(r,sh,sk) - Unfulfilled(r,sh,sk);
-            }
-            Constraint AssignmentSatisfiesShift {
-                IndexDomain: (e,sh);
-                Text: "If the employee is aviable for a shift, then he or she can be assigned, else not";
-                Definition: sum((r,sk), Assignment(r,e,sh,sk)) <= EmployeeDoesShift(e,sh);
-            }
-            Constraint AssignmentSatisfiesSkills {
-                IndexDomain: (r,e,sh,sk);
-                Text: "If the employee has the needed skill for a postion, he or she can be assigned, else not";
-                Definition: Assignment(r,e,sh,sk) <= EmployeeHasSkill(e,sk);
-            }
-            Constraint MaximumOfOneShift {
-                IndexDomain: (e);
-                Text: "An employee cannot do more then one shift";
-                Definition: sum((r,sh,sk),Assignment(r,e,sh,sk)) <= 1;
-            }
-            Parameter UnfulfilledWeightingFactor {
-                Text: "The cost factor of an unfulfilled postion";
-                InitialData: 1000;
-            }
-            Variable UnfulfilledCost {
-                Text: "The total cost caused by unfulfilled postions";
-                Definition: sum((r,sh,sk), Unfulfilled(r,sh,sk) * UnfulfilledWeightingFactor);
-            }
-            Variable NotPreferenceCost {
-                Text: "The total cost caused by assigning employees for less preferred postions";
-                Definition: sum((r,e,sh,sk), Assignment(r,e,sh,sk) * EmployeeSkillPreference(e,sk));
-            }
-            Variable TotalCost {
-                Text: "The total cost of the schedule";
-                Definition: UnfulfilledCost + NotPreferenceCost;
-            }
-            MathematicalProgram MinimizeCost {
-                Objective: TotalCost;
-                Direction: minimize;
-            }
-        }
-        DeclarationSection Initial_Data_Declaration {
-            Assertion Check_AtLeastOneSkill {
-                IndexDomain: e;
-                Text: "Every employee has to have at least one skill";
-                Definition: sum(sk,EmployeeHasSkill(e,sk)) > 0;
-                Action: {
-                    EmployeeHasSkill(e,Element(Skills,round(uniform(0.5,Card(Skills)+0.5)))) := 1;
-                }
-            }
-            Assertion Check_AtLeastOneShift {
-                IndexDomain: e;
-                Text: "Every employee has to do at least one shift";
-                Definition: sum(sh,EmployeeDoesShift(e,sh)) > 0;
-                Action: {
-                    EmployeeDoesShift(e,Element(Shifts,round(uniform(0.5,Card(Shifts)+0.5)))) := 1;
-                }
-            }
-        }
-        Function EmployeeName {
-            Range: string;
-            Body: {
-                nameID := Round(Uniform(0.5,Card(FirstNames) + 0.49));
-                newName := FormatString("%e",Element(FirstNames,nameID));
-                nameID := Round(Uniform(0.5,Card(LastNames)+ 0.49));
-                newName += FormatString(" %e",Element(LastNames,nameID));
-                
-                EmployeeName := newName;
-            }
-            Comment: "Function for generating an employee name";
-            Set FirstNames {
-                Index: fn;
-                InitialData: data{Joe, Ed, Mary, Zoe, Clara, Pete, Carlos, Edith, Robert, Thomas, Sue, Ellen, Ann};
-            }
-            Set LastNames {
-                Index: ln;
-                InitialData: data{A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T};
-            }
-            Parameter nameID;
-            StringParameter newName;
-        }
-    }
-    Section User_Interface_Declarations {
-        Section Input_Parameters {
-            Procedure EmptyNewName {
-                Body: {
-                    Empty NewName;
-                }
-            }
-            DeclarationSection Input_Parameters_Declaration {
-                StringParameter NewName;
-                Parameter NewDemand {
-                    IndexDomain: (sh,sk);
-                }
-                Parameter NewEmployeeSkills {
-                    IndexDomain: (sk);
-                    Range: binary;
-                }
-                Parameter NewEmployeeSkillPreference {
-                    IndexDomain: sk | NewEmployeeSkills(sk);
-                    Range: integer;
-                }
-                Parameter NewEmployeeShifts {
-                    IndexDomain: (sh);
-                    Range: binary;
-                }
-            }
-            Procedure GenerateName {
-                Body: {
-                    generatedName := EmployeeName;
-                    while (StringToElement(Employees,generatedName,0) <> '') do
-                            generatedName := EmployeeName;
-                    endwhile;
-                    
-                    NewName := generatedName;
-                }
-                StringParameter generatedName;
-            }
-            Procedure SaveEmployee {
-                Body: {
-                    SetElementAdd(Employees,SelectedEmployee,NewName);
-                    EmployeeDoesShift(SelectedEmployee,sh) := NewEmployeeShifts(sh);
-                    EmployeeHasSkill(SelectedEmployee,sk) := NewEmployeeSkills(sk);
-                    EmployeeSkillPreference(SelectedEmployee,sk):= NewEmployeeSkillPreference(sk);
-                    
-                    empty NewName, NewEmployeeShifts, NewEmployeeSkillPreference, NewEmployeeSkills;
-                }
-            }
-            Procedure CancelEmployeeDialog {
-                Body: {
-                    empty NewName, NewEmployeeShifts, NewEmployeeSkillPreference, NewEmployeeSkills;
-                }
-            }
-            Procedure SaveRestaurant {
-                Body: {
-                    SetElementAdd(Restaurants,SelectedRestaurant,NewName);
-                    Demand(SelectedRestaurant,sh,sk) := NewDemand(sh,sk);
-                    
-                    empty NewName, NewDemand;
-                }
-            }
-            Procedure CancelRestaurantDialog {
-                Body: {
-                    empty NewName, NewDemand;
-                }
-            }
-        }
-        DeclarationSection Result_Overview_Declarations {
-            Parameter StartTime {
-                IndexDomain: (sh);
-            }
-            ElementParameter CompanyColor {
-                IndexDomain: (r);
-                Range: AllColors;
-            }
-            ElementParameter SkillColor {
-                IndexDomain: (sk);
-                Range: AllColors;
-            }
-        }
-    }
-    Procedure MainInitialization {
-        Body: {
-            Restaurants :=
-              data {'Black Bull Steak Restaurant', 'Smiling Cat Irish Pub', 'Pancake Heaven',
-                            'Restaurant At The Corner', 'Vegetable Garden', 'Pizza House',
-                            'Full Moon Restaurant'};
-            
-            while (Card(Employees) < 200) do
-                    SetElementAdd(Employees,SelectedEmployee,EmployeeName);
-            endwhile;
-            
-            Shifts :=
-               data { Night, Morning, Afternoon };
-            
-            StartTime :=
-               data { Night: 0, Morning : 8,  Afternoon : 16 };
-            
-            Skills :=
-               data{ Waiter, Cook, Cashier, 'Dish Washer', 'Table Cleaner' };
-            
-            SkillColor :=
-               data { Waiter : red,  Cook : blue, Cashier : green,  'Dish Washer' : yellow, 'Table Cleaner' : 'light grey' };
-            
-            CompanyColor(r) := Element(AllColors,ord(r)+6);
-            
-            Demand(r,sh,sk) := round(Uniform(0,4));
-            EmployeeDoesShift(e,sh) := round(uniform(0,1)/3*4);
-            EmployeeHasSkill(e,sk) := round(uniform(0,1)/3*4);
-            
-            assert Check_AtLeastOneShift;
-            assert Check_AtLeastOneSkill;
-            
-            EmployeeSkillPreference(e,sk) := round(uniform(0.5,3.49));
-            
-            SelectedRestaurant := first(Restaurants);
-            SelectedEmployee := first (Employees);
-        }
-    }
-    Procedure MainExecution {
-        Body: {
-            solve MinimizeCost;
-        }
-        ElementParameter ACase {
-            Range: AllCases;
-        }
-    }
-    Procedure MainTermination {
-        Body: {
-            return 1;
-        }
-    }
+	Comment: {
+		"Keywords:
+		Employee assignment problem, scheduling."
+	}
+	Section Data_Model {
+		Section Quantities_and_Units {
+			Comment: {
+				"This section contains all the units and quantities that are added automatically by AIMMS.
+				It is recommended to declare all your quantities here."
+			}
+			Quantity SI_Time_Duration {
+				BaseUnit: s;
+				Conversions: minute->s : #-># * 60;
+				Comment: {
+					"Expresses the value for the duration of periods.
+					
+					The unit s has been added automatically because it is a required unit for AimmsWebUI.
+					
+					The unit minute has been added automatically because it is a required unit for AimmsWebUI."
+				}
+			}
+		}
+		Section Inputs {
+			Section Shifts {
+				Set s_shifts {
+					Index: i_sh;
+					Parameter: ep_selectedShift;
+				}
+				Parameter p_activeShift {
+					IndexDomain: i_sh;
+					Range: binary;
+				}
+				Parameter p_startTime {
+					IndexDomain: (i_sh);
+				}
+			}
+			Section Skills {
+				Set s_skills {
+					Index: i_sk;
+					Parameter: ep_selectedSkill;
+				}
+				Parameter p_activeSkills {
+					IndexDomain: i_sk;
+					Range: binary;
+				}
+			}
+			Section Restaurants {
+				Set s_restaurants {
+					Index: i_rest;
+					Parameter: ep_selectedRestaurant;
+					OrderBy: i_rest;
+				}
+				Parameter p_activeRestaurant {
+					IndexDomain: i_rest;
+					Range: binary;
+				}
+				StringParameter sp_restaurantDescription {
+					IndexDomain: i_rest;
+				}
+				Parameter p_demand {
+					IndexDomain: (i_rest,i_sh,i_sk);
+					Text: "The needed number of skilled employees in the restaurants";
+				}
+			}
+			Section Employees {
+				Set s_employees {
+					Index: i_empl;
+					Parameter: ep_selectedEmployee;
+				}
+				Parameter p_activeEmployee {
+					IndexDomain: i_empl;
+					Range: binary;
+				}
+				StringParameter sp_employeeDescription {
+					IndexDomain: i_empl;
+				}
+				Parameter p_employeeHasSkill {
+					IndexDomain: (i_empl,i_sk);
+					Text: "Employees\' skills";
+					Range: binary;
+				}
+				Parameter p_employeeSkillPreference {
+					IndexDomain: (i_empl,i_sk) | p_employeeHasSkill(i_empl,i_sk);
+					Text: "Job preferences of the employees (lower number means preferred position)";
+				}
+				Parameter p_employeeDoesShift {
+					IndexDomain: (i_empl,i_sh);
+					Text: "Employees\' availability for shifts";
+					Range: binary;
+				}
+			}
+		}
+		Section Math_Model {
+			Variable v_assignment {
+				IndexDomain: (i_rest,i_empl,i_sh,i_sk);
+				Text: "Employees\' work schedule";
+				Range: binary;
+			}
+			Variable v_unfulfilled {
+				IndexDomain: (i_rest,i_sh,i_sk);
+				Text: "Unfulfilled positions";
+				Range: nonnegative;
+			}
+			Constraint c_satisfyDemand {
+				IndexDomain: (i_rest,i_sh,i_sk);
+				Text: "The number of assigned employees has to be equal to the needed number of employees minus the unfulfilled positions";
+				Definition: {
+					sum(i_empl, v_assignment(i_rest,i_empl,i_sh,i_sk)) 
+					= 
+					p_demand(i_rest,i_sh,i_sk) 
+					- 
+					v_unfulfilled(i_rest,i_sh,i_sk)
+				}
+			}
+			Constraint c_assignmentSatisfiesShift {
+				IndexDomain: (i_empl,i_sh);
+				Text: "If the employee is aviable for a shift, then he or she can be assigned, else not";
+				Definition: {
+					sum((i_rest,i_sk), v_assignment(i_rest,i_empl,i_sh,i_sk)) 
+					<= 
+					p_employeeDoesShift(i_empl,i_sh)
+				}
+			}
+			Constraint c_assignmentSatisfiesSkills {
+				IndexDomain: (i_rest,i_empl,i_sh,i_sk);
+				Text: "If the employee has the needed skill for a postion, he or she can be assigned, else not";
+				Definition: {
+					v_assignment(i_rest,i_empl,i_sh,i_sk) 
+					<= 
+					p_employeeHasSkill(i_empl,i_sk)
+				}
+			}
+			Constraint c_maximumOfOneShift {
+				IndexDomain: (i_empl);
+				Text: "An employee cannot do more then one shift";
+				Definition: {
+					sum((i_rest,i_sh,i_sk),v_assignment(i_rest,i_empl,i_sh,i_sk)) 
+					<= 
+					1
+				}
+			}
+			Parameter p_unfulfilledWeightingFactor {
+				Text: "The cost factor of an unfulfilled postion";
+				InitialData: 1000;
+			}
+			Variable v_unfulfilledCost {
+				Text: "The total cost caused by unfulfilled postions";
+				Definition: {
+					sum((i_rest,i_sh,i_sk), 
+					    v_unfulfilled(i_rest,i_sh,i_sk) 
+					    * p_unfulfilledWeightingFactor)
+				}
+			}
+			Variable v_notPreferenceCost {
+				Text: "The total cost caused by assigning employees for less preferred postions";
+				Definition: {
+					sum((i_rest,i_empl,i_sh,i_sk), 
+					    v_assignment(i_rest,i_empl,i_sh,i_sk) 
+					    * p_employeeSkillPreference(i_empl,i_sk))
+				}
+			}
+			Variable v_totalCost {
+				Text: "The total cost of the schedule";
+				Definition: v_unfulfilledCost + v_notPreferenceCost;
+			}
+			MathematicalProgram mp_minimizeCost {
+				Objective: v_totalCost;
+				Direction: minimize;
+			}
+			DeclarationSection Model_Information {
+				ElementParameter ep_programStatus {
+					Range: AllSolutionStates;
+				}
+				Parameter p_gap;
+				Parameter p_numberOfContraints;
+				Parameter p_numberOfVariables;
+				Parameter p_solutionTime {
+					InitialData: 0;
+				}
+			}
+		}
+		Section Outputs;
+	}
+	Section UI_Declarations {
+		Procedure pr_empty;
+		StringParameter sp_logo {
+			Definition: "aimms_logo.png";
+		}
+		Section Workflow {
+			StringParameter sp_myWorkflows {
+				IndexDomain: (webui::indexWorkflowOrder,webui::indexWorkflowSpec);
+			}
+			StringParameter sp_myWorkflowSteps {
+				IndexDomain: (webui::indexWorkflowOrder,webui::indexNoOfPages,webui::indexWorkflowPageSpec);
+				Definition: {
+					data 
+					{ ( 1, 1, displayText       ) : "Welcome"            ,  ( 1, 1, icon              ) : "aimms-happy"        ,
+					  ( 1, 1, pageId            ) : "home"               ,  ( 1, 1, tooltip           ) : "welcome"            ,
+					  ( 1, 1, workflowPageState ) : "active"             ,  ( 1, 1, pageDataState     ) : "Incomplete"         ,
+					  ( 1, 1, redirectPageId    ) : "home"               ,  ( 1, 2, displayText       ) : "Story"              ,
+					  ( 1, 2, icon              ) : "aimms-lamp5"        ,  ( 1, 2, pageId            ) : "story"              ,
+					  ( 1, 2, tooltip           ) : "Problem description",  ( 1, 2, workflowPageState ) : "active"             ,
+					  ( 1, 2, pageDataState     ) : "Incomplete"         ,  ( 1, 2, redirectPageId    ) : "home"               ,
+					  ( 1, 3, displayText       ) : "Master"             ,  ( 1, 3, icon              ) : "aimms-equalizer2"   ,
+					  ( 1, 3, pageId            ) : "inputs"             ,  ( 1, 3, tooltip           ) : "Master data"        ,
+					  ( 1, 3, workflowPageState ) : "active"             ,  ( 1, 3, pageDataState     ) : "Incomplete"         ,
+					  ( 1, 3, redirectPageId    ) : "home"               ,  ( 1, 4, displayText       ) : "Transactional"      ,
+					  ( 1, 4, icon              ) : "aimms-equalizer2"   ,  ( 1, 4, pageId            ) : "transactional_data" ,
+					  ( 1, 4, tooltip           ) : "Transactional data" ,  ( 1, 4, workflowPageState ) : "active"             ,
+					  ( 1, 4, pageDataState     ) : "Incomplete"         ,  ( 1, 4, redirectPageId    ) : "home"               ,
+					  ( 1, 5, displayText       ) : "Results"            ,  ( 1, 5, icon              ) : "aimms-make-group"   ,
+					  ( 1, 5, pageId            ) : "results"            ,  ( 1, 5, tooltip           ) : "Model outputs"      ,
+					  ( 1, 5, workflowPageState ) : "active",!if (not p_solutionTime) then "inactive" else "active" endif,
+					  ( 1, 5, pageDataState     ) : "Incomplete"         ,
+					  ( 1, 5, redirectPageId    ) : "home"               ,  ( 1, 6, displayText       ) : "Gantt"              ,
+					  ( 1, 6, icon              ) : "aimms-wall"         ,  ( 1, 6, pageId            ) : "gantt"              ,
+					  ( 1, 6, tooltip           ) : "Gantt chart"        ,  ( 1, 6, workflowPageState ) : "active",!if (not p_solutionTime) then "inactive" else "active" endif,
+					  ( 1, 6, pageDataState     ) : "Incomplete"         ,  ( 1, 6, redirectPageId    ) : "home"                }
+				}
+				Comment: {
+					"\"active\",!if (not p_solutionTime) then \"inactive\" else \"active\" endif,"
+				}
+			}
+		}
+		Section Pages {
+			Section Master_Page {
+				DeclarationSection Input_PageAction {
+					StringParameter sp_inputSecondaryActions {
+						IndexDomain: (webui::indexPageExtension,webui::indexPageActionSpec);
+						Definition: {
+							data 
+							{ ( 1, displaytext ) : "Import"            ,  ( 1, icon        ) : "aimms-file-excel"  ,
+							  ( 1, procedure   ) : "pr_importExcelData",  ( 1, state       ) : "active"            ,
+							  ( 2, displaytext ) : "Solve"             ,  ( 2, icon        ) : "aimms-cog"         ,
+							  ( 2, procedure   ) : "mainexecution"     ,  ( 2, state       ) : "active"             }
+						}
+					}
+				}
+			}
+			Section Transactional_Page;
+			Section Results_Page;
+			Section Gantt_Page;
+		}
+		Section FlagsIdentifier {
+			StringParameter sp_readOnlyFlag {
+				Definition: "readonly";
+			}
+		}
+	}
+	Section OLD {
+		Section Input_Parameters {
+			Procedure EmptyNewName {
+				Body: {
+					Empty sp_newName;
+				}
+			}
+			Procedure GenerateName {
+				Body: {
+					generatedName := EmployeeName;
+					while (StringToElement(s_employees,generatedName,0) <> '') do
+					        generatedName := EmployeeName;
+					endwhile;
+					
+					sp_newName := generatedName;
+				}
+				StringParameter generatedName;
+			}
+			Procedure SaveEmployee {
+				Body: {
+					SetElementAdd(s_employees,ep_selectedEmployee,sp_newName);
+					p_employeeDoesShift(ep_selectedEmployee,i_sh) := p_newEmployeeShifts(i_sh);
+					p_employeeHasSkill(ep_selectedEmployee,i_sk) := p_newEmployeeSkills(i_sk);
+					p_employeeSkillPreference(ep_selectedEmployee,i_sk):= p_newEmployeeSkillPreference(i_sk);
+					
+					empty sp_newName, p_newEmployeeShifts, p_newEmployeeSkillPreference, p_newEmployeeSkills;
+				}
+			}
+			Procedure CancelEmployeeDialog {
+				Body: {
+					empty sp_newName, p_newEmployeeShifts, p_newEmployeeSkillPreference, p_newEmployeeSkills;
+				}
+			}
+			Procedure SaveRestaurant {
+				Body: {
+					SetElementAdd(s_restaurants,ep_selectedRestaurant,sp_newName);
+					p_demand(ep_selectedRestaurant,i_sh,i_sk) := p_newDemand(i_sh,i_sk);
+					
+					empty sp_newName, p_newDemand;
+				}
+			}
+			Procedure CancelRestaurantDialog {
+				Body: {
+					empty sp_newName, p_newDemand;
+				}
+			}
+		}
+		Parameter p_newDemand {
+			IndexDomain: (i_sh,i_sk);
+		}
+		Parameter p_newEmployeeShifts {
+			IndexDomain: (i_sh);
+			Range: binary;
+		}
+		Parameter p_newEmployeeSkills {
+			IndexDomain: (i_sk);
+			Range: binary;
+		}
+		Parameter p_newEmployeeSkillPreference {
+			IndexDomain: i_sk | p_newEmployeeSkills(i_sk);
+			Range: integer;
+		}
+		StringParameter sp_newName;
+		DeclarationSection Result_Overview_Declarations {
+			ElementParameter CompanyColor {
+				IndexDomain: (i_rest);
+				Range: AllColors;
+			}
+			ElementParameter SkillColor {
+				IndexDomain: (i_sk);
+				Range: AllColors;
+			}
+		}
+		DeclarationSection Initial_Data_Declaration {
+			Assertion Check_AtLeastOneSkill {
+				IndexDomain: i_empl;
+				Text: "Every employee has to have at least one skill";
+				Definition: sum(i_sk,p_employeeHasSkill(i_empl,i_sk)) > 0;
+				Action: {
+					p_employeeHasSkill(i_empl,Element(s_skills,round(uniform(0.5,Card(s_skills)+0.5)))) := 1;
+				}
+			}
+			Assertion Check_AtLeastOneShift {
+				IndexDomain: i_empl;
+				Text: "Every employee has to do at least one shift";
+				Definition: sum(i_sh,p_employeeDoesShift(i_empl,i_sh)) > 0;
+				Action: {
+					p_employeeDoesShift(i_empl,Element(s_shifts,round(uniform(0.5,Card(s_shifts)+0.5)))) := 1;
+				}
+			}
+		}
+		Function EmployeeName {
+			Range: string;
+			Body: {
+				nameID := Round(Uniform(0.5,Card(FirstNames) + 0.49));
+				newName := FormatString("%e",Element(FirstNames,nameID));
+				nameID := Round(Uniform(0.5,Card(LastNames)+ 0.49));
+				newName += FormatString(" %e",Element(LastNames,nameID));
+				
+				EmployeeName := newName;
+			}
+			Comment: "Function for generating an employee name";
+			Set FirstNames {
+				Index: fn;
+				InitialData: data{Joe, Ed, Mary, Zoe, Clara, Pete, Carlos, Edith, Robert, Thomas, Sue, Ellen, Ann};
+			}
+			Set LastNames {
+				Index: ln;
+				InitialData: data{A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T};
+			}
+			Parameter nameID;
+			StringParameter newName;
+		}
+	}
+	Procedure MainInitialization {
+		Body: {
+			s_restaurants :=
+			  data {'Black Bull Steak Restaurant', 'Smiling Cat Irish Pub', 'Pancake Heaven',
+			                'Restaurant At The Corner', 'Vegetable Garden', 'Pizza House',
+			                'Full Moon Restaurant'};
+			
+			while (Card(s_employees) < 200) do
+			        SetElementAdd(s_employees,ep_selectedEmployee,EmployeeName);
+			endwhile;
+			
+			s_shifts :=
+			   data { Night, Morning, Afternoon };
+			
+			p_startTime :=
+			   data { Night: 0, Morning : 8,  Afternoon : 16 };
+			
+			s_skills :=
+			   data{ Waiter, Cook, Cashier, 'Dish Washer', 'Table Cleaner' };
+			
+			SkillColor :=
+			   data { Waiter : red,  Cook : blue, Cashier : green,  'Dish Washer' : yellow, 'Table Cleaner' : 'light grey' };
+			
+			CompanyColor(i_rest) := Element(AllColors,ord(i_rest)+6);
+			
+			p_demand(i_rest,i_sh,i_sk) := round(Uniform(0,4));
+			p_employeeDoesShift(i_empl,i_sh) := round(uniform(0,1)/3*4);
+			p_employeeHasSkill(i_empl,i_sk) := round(uniform(0,1)/3*4);
+			
+			assert Check_AtLeastOneShift;
+			assert Check_AtLeastOneSkill;
+			
+			p_employeeSkillPreference(i_empl,i_sk) := round(uniform(0.5,3.49));
+			
+			ep_selectedRestaurant := first(s_restaurants);
+			ep_selectedEmployee := first (s_employees);
+		}
+	}
+	Procedure MainExecution {
+		Body: {
+			solve mp_minimizeCost;
+		}
+		ElementParameter ACase {
+			Range: AllCases;
+		}
+	}
+	Procedure MainTermination {
+		Body: {
+			return 1;
+		}
+	}
 }

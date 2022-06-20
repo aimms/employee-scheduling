@@ -1,0 +1,970 @@
+{
+  "version": "4.67.0",
+  "application": {
+    "aimms.widget.type": {
+      "literal": "application"
+    },
+    "browsername": {
+      "aimms": {
+        "contents": [
+          "webui::ClientBrowserName"
+        ]
+      }
+    },
+    "browsertimezone": {
+      "aimms": {
+        "contents": [
+          "webui::BrowserTimeZone"
+        ]
+      }
+    },
+    "ignoredst": {
+      "aimms": {
+        "contents": [
+          "webui::IgnoreDST"
+        ]
+      }
+    },
+    "pages": {
+      "literal": {
+        "name": "root",
+        "slug": "root",
+        "children": [
+          {
+            "name": "Main Project",
+            "slug": "main_project",
+            "children": [
+              {
+                "name": "home",
+                "slug": "home",
+                "type": "pagev2-grid",
+                "children": []
+              },
+              {
+                "name": "Story",
+                "type": "pagev2-grid",
+                "slug": "story",
+                "children": []
+              },
+              {
+                "name": "Master Data",
+                "type": "pagev2-grid",
+                "slug": "inputs",
+                "children": []
+              },
+              {
+                "name": "Transactional Data",
+                "type": "pagev2-grid",
+                "slug": "transactional_data",
+                "children": []
+              },
+              {
+                "name": "Results",
+                "type": "pagev2-grid",
+                "slug": "results",
+                "children": []
+              },
+              {
+                "name": "Gantt",
+                "type": "pagev2-grid",
+                "slug": "gantt",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "theme.classic": {
+      "literal": "NOT_ALLOWED"
+    },
+    "timezone": {
+      "aimms": {
+        "contents": [
+          "webui::DisplayTimeZone"
+        ]
+      }
+    },
+    "timezone.dst.readonly": {
+      "aimms": {
+        "contents": [
+          "webui::DefaultDSTSettingForDisplayTimeZone"
+        ]
+      }
+    },
+    "workflows.configuration": {
+      "aimms": {
+        "contents": [
+          "sp_myWorkflowSteps"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_myWorkflowSteps",
+            "slice": [
+              {
+                "index": "webui::indexWorkflowOrder",
+                "type": "free",
+                "value": "webui::indexWorkflowOrder"
+              },
+              {
+                "index": "webui::indexNoOfPages",
+                "type": "free",
+                "value": "webui::indexNoOfPages"
+              },
+              {
+                "index": "webui::indexWorkflowPageSpec",
+                "type": "free",
+                "value": "webui::indexWorkflowPageSpec"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "layouts/custom_53477475-5859-4b30-8764-0784256aff19": {
+    "definition": {
+      "literal": {
+        "componentName": "Grid",
+        "props": {
+          "gridTemplateColumns": "1fr",
+          "gridTemplateRows": "1fr",
+          "gridTemplateAreas": "\"area-a\""
+        },
+        "items": [
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-a",
+              "name": "Area A",
+              "gridAutoFlow": "column"
+            }
+          }
+        ]
+      }
+    },
+    "displayName": {
+      "literal": "Custom_Master"
+    }
+  },
+  "pages/home": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "img_homeLogo",
+          "gridArea": "area-d",
+          "dndId": "Unassigned widgetsimg_homeLogo1"
+        },
+        {
+          "widgetUri": "txt_welcome",
+          "gridArea": "area-a",
+          "dndId": "area-atxt_welcome0"
+        }
+      ]
+    },
+    "layoutId": {
+      "literal": "Layout10"
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "txt_welcome",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "img_homeLogo",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
+  "pages/inputs": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "tbl_companies",
+          "gridArea": "area-a",
+          "dndId": "area-atbl_companies1"
+        },
+        {
+          "widgetUri": "tbl_employees",
+          "gridArea": "area-a",
+          "dndId": "area-atbl_employees2"
+        },
+        {
+          "widgetUri": "tbl_shifts",
+          "gridArea": "area-a",
+          "dndId": "area-atbl_shifts3"
+        },
+        {
+          "widgetUri": "tbl_skills",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetstbl_skills0"
+        }
+      ]
+    },
+    "layoutId": {
+      "literal": "custom_53477475-5859-4b30-8764-0784256aff19"
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "tbl_companies",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "tbl_employees",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "tbl_shifts",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "tbl_skills",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
+  "pages/results": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "tbl_calculatedSchedule",
+          "gridArea": "area-b",
+          "dndId": "Unassigned widgetstbl_calculatedSchedule1"
+        },
+        {
+          "widgetUri": "tbl_scheduledTasks",
+          "gridArea": "area-a",
+          "dndId": "area-atbl_scheduledTasks0"
+        }
+      ]
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "tbl_scheduledTasks",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "tbl_calculatedSchedule",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
+  "pages/story": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "txt_problemDescription",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetstxt_problemDescription0"
+        }
+      ]
+    },
+    "layoutId": {
+      "literal": "Layout11"
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "txt_problemDescription",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
+  "pages/transactional_data": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "tbl_demand",
+          "gridArea": "area-b",
+          "dndId": "area-btbl_demand1"
+        },
+        {
+          "widgetUri": "tbl_employeeData",
+          "gridArea": "area-a",
+          "dndId": "area-atbl_employeeData2"
+        },
+        {
+          "widgetUri": "tbl_skillPreference",
+          "gridArea": "area-a",
+          "dndId": "area-btbl_skillPreference0"
+        }
+      ]
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "tbl_employeeData",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "tbl_skillPreference",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "tbl_demand",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
+  "widgets/img_homeLogo": {
+    "aimms.widget.type": {
+      "literal": "image"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "sp_logo"
+        ]
+      }
+    },
+    "name": {
+      "literal": "img_homeLogo"
+    }
+  },
+  "widgets/tbl_calculatedSchedule": {
+    "aimms.widget.type": {
+      "literal": "table"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "v_assignment"
+        ]
+      }
+    },
+    "name": {
+      "literal": "tbl_calculatedSchedule"
+    },
+    "title": {
+      "literal": "Calculated Schedule"
+    }
+  },
+  "widgets/tbl_companies": {
+    "aimms.widget.type": {
+      "literal": "table"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_activeRestaurant",
+          "sp_restaurantDescription"
+        ]
+      }
+    },
+    "contents.displaydomain": {
+      "literal": {
+        "sp_restaurantdescription": "1",
+        "p_activerestaurant": "1"
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "rowHeader": [
+          "i_rest"
+        ],
+        "colHeader": [
+          "<IDENTIFIER-SET>"
+        ],
+        "aggregated": []
+      }
+    },
+    "custom.column.widths": {
+      "literal": [
+        {
+          "type": "rowHeader",
+          "colKey": "i_rest",
+          "width": 36.81
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "<IDENTIFIER-SET>": "p_activeRestaurant"
+          },
+          "width": 11.91
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "<IDENTIFIER-SET>": "sp_restaurantDescription"
+          },
+          "width": 32.11
+        }
+      ]
+    },
+    "name": {
+      "literal": "tbl_restaurants"
+    },
+    "title": {
+      "literal": "Restaurants"
+    }
+  },
+  "widgets/tbl_demand": {
+    "aimms.widget.type": {
+      "literal": "table"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_demand"
+        ]
+      }
+    },
+    "contents.displaydomain": {
+      "literal": {
+        "p_demand": "1"
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "rowHeader": [
+          "i_rest"
+        ],
+        "colHeader": [
+          "i_sk",
+          "i_sh"
+        ],
+        "aggregated": [
+          "<IDENTIFIER-SET>"
+        ]
+      }
+    },
+    "custom.column.widths": {
+      "literal": [
+        {
+          "type": "rowHeader",
+          "colKey": "i_rest",
+          "width": 34.2
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Waiter",
+            "i_sh": "Morning"
+          },
+          "width": 13.95
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Waiter",
+            "i_sh": "Afternoon"
+          },
+          "width": 15.03
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Cook",
+            "i_sh": "Night"
+          },
+          "width": 12.29
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Cook",
+            "i_sh": "Morning"
+          },
+          "width": 14.16
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Cook",
+            "i_sh": "Afternoon"
+          },
+          "width": 13.54
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Cashier",
+            "i_sh": "Night"
+          },
+          "width": 14.58
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Cashier",
+            "i_sh": "Morning"
+          },
+          "width": 13.33
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Cashier",
+            "i_sh": "Afternoon"
+          },
+          "width": 13.33
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Dish Washer",
+            "i_sh": "Night"
+          },
+          "width": 17.67
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Dish Washer",
+            "i_sh": "Morning"
+          },
+          "width": 18.08
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Dish Washer",
+            "i_sh": "Afternoon"
+          },
+          "width": 13.95
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Waiter",
+            "i_sh": "Night"
+          },
+          "width": 15.29
+        }
+      ]
+    },
+    "default.column.width": {
+      "literal": 20
+    },
+    "name": {
+      "literal": "tbl_demand"
+    },
+    "title": {
+      "literal": "Restaurant Demand"
+    }
+  },
+  "widgets/tbl_employeeData": {
+    "aimms.widget.type": {
+      "literal": "table"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_employeeDoesShift"
+        ]
+      }
+    },
+    "contents.displaydomain": {
+      "literal": {
+        "p_employeedoesshift": "1"
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "rowHeader": [
+          "i_empl",
+          "i_sk"
+        ],
+        "colHeader": [
+          "i_sh"
+        ],
+        "aggregated": [
+          "<IDENTIFIER-SET>"
+        ]
+      }
+    },
+    "custom.column.widths": {
+      "literal": [
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sh": "Morning"
+          },
+          "width": 12.31
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sh": "Night"
+          },
+          "width": 10.95
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sh": "Afternoon"
+          },
+          "width": 14.17
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "i_empl",
+          "width": 19.47
+        }
+      ]
+    },
+    "name": {
+      "literal": "tbl_employeeData"
+    },
+    "title": {
+      "literal": "Employee Shifts"
+    }
+  },
+  "widgets/tbl_employees": {
+    "aimms.widget.type": {
+      "literal": "table"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_activeEmployee",
+          "sp_employeeDescription"
+        ]
+      }
+    },
+    "contents.displaydomain": {
+      "literal": {
+        "p_activeemployee": "1",
+        "sp_employeedescription": "1"
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "rowHeader": [
+          "i_empl"
+        ],
+        "colHeader": [
+          "<IDENTIFIER-SET>"
+        ],
+        "aggregated": []
+      }
+    },
+    "custom.column.widths": {
+      "literal": [
+        {
+          "type": "rowHeader",
+          "colKey": "i_empl",
+          "width": 19.93
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "<IDENTIFIER-SET>": "p_activeEmployee"
+          },
+          "width": 12.08
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "<IDENTIFIER-SET>": "sp_employeeDescription"
+          },
+          "width": 28.76
+        }
+      ]
+    },
+    "name": {
+      "literal": "tbl_employees"
+    },
+    "title": {
+      "literal": "Employees"
+    }
+  },
+  "widgets/tbl_scheduledTasks": {
+    "aimms.widget.type": {
+      "literal": "table"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_demand",
+          "v_unfulfilled"
+        ]
+      }
+    },
+    "name": {
+      "literal": "tbl_scheduledTasks"
+    },
+    "title": {
+      "literal": "Scheduled Tasks"
+    }
+  },
+  "widgets/tbl_shifts": {
+    "aimms.widget.type": {
+      "literal": "table"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_activeShift",
+          "p_startTime"
+        ]
+      }
+    },
+    "contents.displaydomain": {
+      "literal": {
+        "p_activeshift": "1",
+        "p_starttime": "1"
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "rowHeader": [
+          "i_sh"
+        ],
+        "colHeader": [
+          "<IDENTIFIER-SET>"
+        ],
+        "aggregated": []
+      }
+    },
+    "custom.column.widths": {
+      "literal": [
+        {
+          "type": "rowHeader",
+          "colKey": "i_sh",
+          "width": 19.31
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "<IDENTIFIER-SET>": "p_activeShift"
+          },
+          "width": 12.5
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "<IDENTIFIER-SET>": "p_startTime"
+          },
+          "width": 16.35
+        }
+      ]
+    },
+    "name": {
+      "literal": "tbl_shifts"
+    },
+    "show.units": {
+      "literal": 1
+    },
+    "title": {
+      "literal": "Shifts"
+    }
+  },
+  "widgets/tbl_skillPreference": {
+    "aimms.widget.type": {
+      "literal": "table"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_employeeHasSkill",
+          "p_employeeSkillPreference"
+        ]
+      }
+    },
+    "contents.displaydomain": {
+      "literal": {
+        "p_employeehasskill": "1",
+        "p_employeeskillpreference": "p_employeeHasSkill "
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "rowHeader": [
+          "i_empl",
+          "<IDENTIFIER-SET>"
+        ],
+        "colHeader": [
+          "i_sk"
+        ],
+        "aggregated": []
+      }
+    },
+    "custom.column.widths": {
+      "literal": [
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Table Cleaner"
+          },
+          "width": 17.89
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Dish Washer"
+          },
+          "width": 16.86
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Cashier"
+          },
+          "width": 13.96
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Cook"
+          },
+          "width": 12.5
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Waiter"
+          },
+          "width": 13.04
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "i_empl",
+          "width": 16.84
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "<IDENTIFIER-SET>",
+          "width": 21.81
+        }
+      ]
+    },
+    "name": {
+      "literal": "tbl_skillPreference"
+    },
+    "title": {
+      "literal": "Employee Skills"
+    }
+  },
+  "widgets/tbl_skills": {
+    "aimms.widget.type": {
+      "literal": "table"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_activeSkills"
+        ]
+      }
+    },
+    "contents.displaydomain": {
+      "literal": {
+        "p_activeskills": "1"
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "rowHeader": [
+          "i_sk"
+        ],
+        "colHeader": [
+          "<IDENTIFIER-SET>"
+        ],
+        "aggregated": []
+      }
+    },
+    "custom.column.widths": {
+      "literal": [
+        {
+          "type": "rowHeader",
+          "colKey": "i_sk",
+          "width": 25.06
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "<IDENTIFIER-SET>": "p_activeSkills"
+          },
+          "width": 12.29
+        }
+      ]
+    },
+    "name": {
+      "literal": "tbl_skills"
+    },
+    "title": {
+      "literal": "Skills"
+    }
+  },
+  "widgets/txt_problemDescription": {
+    "aimms.widget.type": {
+      "literal": "text"
+    },
+    "contents": {
+      "literal": "<div><span style=\"background-color: inherit; font-size: 32px;\"><b>Story</b></span></div><div><br></div><div><span style=\"font-size: 18px;\">In this example an optimal employee assignment is determined for a chain of restaurants. Each restaurant has different demands concerning the number of employees available and their skills. The objective of the optimization is to find the best placement of staff at the lowest cost, while taking into account shortage of skilled workforce.</span></div><div><br></div><div><span style=\"font-size: 18px;\">The employees work in shifts and each position is primarily fulfilled by skilled employees. Assigning a less experienced staff member to a task will have impact on the overall cost.&nbsp;</span></div>"
+    },
+    "name": {
+      "literal": "txt_problemDescription"
+    }
+  },
+  "widgets/txt_welcome": {
+    "aimms.widget.type": {
+      "literal": "text"
+    },
+    "contents": {
+      "literal": "<div style=\"text-align: center;\">&nbsp;</div><div><b><span style=\"background-color: inherit; font-size: 32px;\">Welcome!</span></b></div><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\">You are in an AIMMS Example. Feel free to play around and create something more in this app!</span></div><div><span style=\"background-color: inherit; font-size: 18px;\">&nbsp;</span></div><div><span style=\"background-color: inherit; font-size: 18px;\">If you do, please fork this repository and commit your changes.&nbsp;</span><b><span style=\"background-color: inherit; font-size: 18px;\">This ensures our GitHub stays up-to-date for the entire community!</span></b></div><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\">You can also check our other interactive resources:</span></div><div><br></div><ul><li><span style=\"background-color: inherit; font-size: 18px;\">In the Online&nbsp;</span><a href=\"https://community.aimms.com/\" style=\"background-color: inherit; font-size: 18px;\" target=\"_blank\">Community</a><span style=\"background-color: inherit; font-size: 18px;\">, talk to other developers and AIMMSians about the product, modeling, use cases, and more.</span></li><li><span style=\"background-color: inherit; font-size: 18px;\">In the&nbsp;</span><a href=\"https://academy.aimms.com/\" style=\"background-color: inherit; font-size: 18px;\" target=\"_blank\">Academy</a><span style=\"background-color: inherit; font-size: 18px;\">, learn new skills and challenge yourself. We are busy creating new courses, so keep an eye out!</span></li></ul><div><br></div><div><span style=\"background-color: inherit; font-size: 18px;\">For questions that can't be posted on the community, contact us at&nbsp;</span><i style=\"background-color: rgb(255, 255, 204); font-size: 18px;\">support@aimms.com</i><span style=\"background-color: inherit; font-size: 18px;\">.</span></div><div><br></div><div><br></div><div><br></div><div><br></div><div><br></div><div><br></div><div><br></div>"
+    },
+    "name": {
+      "literal": "txt_welcome"
+    }
+  }
+}
