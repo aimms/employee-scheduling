@@ -62,7 +62,14 @@
                 "name": "Results",
                 "type": "pagev2-grid",
                 "slug": "results",
-                "children": []
+                "children": [
+                  {
+                    "name": "Model Information",
+                    "type": "pagev2-grid-sidepanel",
+                    "slug": "model_information",
+                    "children": []
+                  }
+                ]
               },
               {
                 "name": "Gantt",
@@ -153,7 +160,7 @@
         "componentName": "Grid",
         "props": {
           "gridTemplateColumns": "1fr 1fr",
-          "gridTemplateRows": "1fr 1fr",
+          "gridTemplateRows": "0.7fr 0.3fr",
           "gridTemplateAreas": "\"area-a area-b\" \"area-a area-c\""
         },
         "items": [
@@ -185,7 +192,7 @@
       }
     },
     "displayName": {
-      "literal": "Layout5 Copy"
+      "literal": "Custom_Gantt"
     }
   },
   "pages/gantt": {
@@ -311,6 +318,30 @@
     "layoutId": {
       "literal": "custom_53477475-5859-4b30-8764-0784256aff19"
     },
+    "secondarypageactions": {
+      "aimms": {
+        "contents": [
+          "sp_masterSecondaryActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_masterSecondaryActions",
+            "slice": [
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexPageActionSpec",
+                "type": "free",
+                "value": "webui::indexPageActionSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "widgets": {
       "literal": [
         {
@@ -344,6 +375,31 @@
       ]
     }
   },
+  "pages/model_information": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid-sidepanel"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "scl_modelInformation",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetsscl_modelInformation0"
+        }
+      ]
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "scl_modelInformation",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
   "pages/results": {
     "aimms.widget.type": {
       "literal": "pagev2-grid"
@@ -366,6 +422,30 @@
           "dndId": "Unassigned widgetscbc_demandFulfillment_12"
         }
       ]
+    },
+    "sidepanels": {
+      "aimms": {
+        "contents": [
+          "sp_resultsSidePanel"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_resultsSidePanel",
+            "slice": [
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexSidePanelSpec",
+                "type": "free",
+                "value": "webui::indexSidePanelSpec"
+              }
+            ]
+          }
+        ]
+      }
     },
     "widgets": {
       "literal": [
@@ -443,6 +523,30 @@
           "dndId": "area-btbl_skillPreference0"
         }
       ]
+    },
+    "secondarypageactions": {
+      "aimms": {
+        "contents": [
+          "sp_masterSecondaryActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_masterSecondaryActions",
+            "slice": [
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexPageActionSpec",
+                "type": "free",
+                "value": "webui::indexPageActionSpec"
+              }
+            ]
+          }
+        ]
+      }
     },
     "widgets": {
       "literal": [
@@ -933,6 +1037,26 @@
       "literal": "img_homeLogo"
     }
   },
+  "widgets/scl_modelInformation": {
+    "aimms.widget.type": {
+      "literal": "scalar"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "ep_programStatus",
+          "p_gap",
+          "p_numberOfContraints",
+          "p_numberOfVariables",
+          "p_solutionTime",
+          "v_totalCost"
+        ]
+      }
+    },
+    "name": {
+      "literal": "scl_modelInformation"
+    }
+  },
   "widgets/tbl_calculatedSchedule": {
     "aimms.widget.type": {
       "literal": "table"
@@ -1256,7 +1380,7 @@
             "i_sk": "Waiter",
             "i_sh": "Night"
           },
-          "width": 15.29
+          "width": 12.73
         }
       ]
     },
@@ -1450,6 +1574,18 @@
           "type": "rowHeader",
           "colKey": "i_sk",
           "width": 16.64
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "<IDENTIFIER-SET>",
+          "width": 15.61
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_rest": "Black Bull Steak Restaurant"
+          },
+          "width": 12.15
         }
       ]
     },
@@ -1620,13 +1756,13 @@
     "contents": {
       "aimms": {
         "contents": [
-          "p_activeSkills"
+          "p_activeSkill"
         ]
       }
     },
     "contents.displaydomain": {
       "literal": {
-        "p_activeskills": "1"
+        "p_activeskill": "1"
       }
     },
     "contents.partition": {

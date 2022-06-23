@@ -75,7 +75,7 @@ Model Main_EmployeeAssignment {
 					Index: i_sk;
 					Parameter: ep_selectedSkill;
 				}
-				Parameter p_activeSkills {
+				Parameter p_activeSkill {
 					IndexDomain: i_sk;
 					Range: binary;
 				}
@@ -206,12 +206,20 @@ Model Main_EmployeeAssignment {
 			DeclarationSection Model_Information {
 				ElementParameter ep_programStatus {
 					Range: AllSolutionStates;
+					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
-				Parameter p_gap;
-				Parameter p_numberOfContraints;
-				Parameter p_numberOfVariables;
+				Parameter p_gap {
+					webui::FlagsIdentifier: sp_readOnlyFlag;
+				}
+				Parameter p_numberOfContraints {
+					webui::FlagsIdentifier: sp_readOnlyFlag;
+				}
+				Parameter p_numberOfVariables {
+					webui::FlagsIdentifier: sp_readOnlyFlag;
+				}
 				Parameter p_solutionTime {
 					InitialData: 0;
+					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 			}
 		}
@@ -265,21 +273,51 @@ Model Main_EmployeeAssignment {
 		}
 		Section Pages {
 			Section Master_Page {
-				DeclarationSection Input_PageAction {
-					StringParameter sp_inputSecondaryActions {
+				DeclarationSection Master_PageAction {
+					StringParameter sp_masterSecondaryActions {
 						IndexDomain: (webui::indexPageExtension,webui::indexPageActionSpec);
 						Definition: {
 							data 
-							{ ( 1, displaytext ) : "Import"            ,  ( 1, icon        ) : "aimms-file-excel"  ,
-							  ( 1, procedure   ) : "pr_importExcelData",  ( 1, state       ) : "active"            ,
-							  ( 2, displaytext ) : "Solve"             ,  ( 2, icon        ) : "aimms-cog"         ,
-							  ( 2, procedure   ) : "mainexecution"     ,  ( 2, state       ) : "active"             }
+							{ ( 1, displaytext ) : "Import"                ,  ( 1, icon        ) : "aimms-database-insert" ,
+							  ( 1, procedure   ) : "pr_importExcelData"    ,  ( 1, state       ) : "active"                ,
+							  ( 2, displaytext ) : "Export"                ,  ( 2, icon        ) : "aimms-database-export" ,
+							  ( 2, state       ) : "active"                ,  ( 3, displaytext ) : "Generate Random"       ,
+							  ( 3, icon        ) : "aimms-database-refresh",  ( 3, state       ) : "active"                ,
+							  ( 4, displaytext ) : "Solve"                 ,  ( 4, icon        ) : "aimms-cog"             ,
+							  ( 4, procedure   ) : "mainexecution"         ,  ( 4, state       ) : "active"                 }
 						}
 					}
 				}
 			}
-			Section Transactional_Page;
-			Section Results_Page;
+			Section Transactional_Page {
+				DeclarationSection Transactional_PageAction {
+					StringParameter sp_transactionalSecondaryActions {
+						IndexDomain: (webui::indexPageExtension,webui::indexPageActionSpec);
+						Definition: {
+							data 
+							{ ( 1, displaytext ) : "Import"                ,  ( 1, icon        ) : "aimms-database-insert" ,
+							  ( 1, procedure   ) : "pr_importExcelData"    ,  ( 1, state       ) : "active"                ,
+							  ( 2, displaytext ) : "Export"                ,  ( 2, icon        ) : "aimms-database-export" ,
+							  ( 2, state       ) : "active"                ,  ( 3, displaytext ) : "Generate Random"       ,
+							  ( 3, icon        ) : "aimms-database-refresh",  ( 3, state       ) : "active"                ,
+							  ( 4, displaytext ) : "Solve"                 ,  ( 4, icon        ) : "aimms-cog"             ,
+							  ( 4, procedure   ) : "mainexecution"         ,  ( 4, state       ) : "active"                 }
+						}
+					}
+				}
+			}
+			Section Results_Page {
+				StringParameter sp_resultsSidePanel {
+					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
+					Definition: {
+						data 
+						{ ( 1, displayText ) : "KPIs"             ,  ( 1, pageId      ) : "informations"     ,
+						  ( 1, icon        ) : "aimms-question"   ,  ( 1, state       ) : "active"           ,
+						  ( 2, displayText ) : "Model Information",  ( 2, pageId      ) : "model_information",
+						  ( 2, icon        ) : "aimms-info"       ,  ( 2, state       ) : "active"            }
+					}
+				}
+			}
 			Section Gantt_Page {
 				Parameter p_restaurantStartTime {
 					IndexDomain: (i_rest, i_empl, i_sh, i_sk) | p_assignment(i_rest,i_empl,i_sh,i_sk);
@@ -297,79 +335,143 @@ Model Main_EmployeeAssignment {
 			}
 		}
 	}
+	Section Database_Connection {
+		StringParameter sp_connectionString {
+			Definition: {
+				SQLCreateConnectionString (
+				    DatabaseInterface              :  'odbc',
+				    DriverName                     :  "SQLite3 ODBC Driver",
+				    DatabaseName                   :  "test.db", !The path of your database
+				    AdditionalConnectionParameters :  "") ;
+			}
+		}
+		Procedure pr_readAll {
+			Body: {
+				pr_readSkillDB;
+				pr_readShiftDB;
+				pr_readEmployeeDB;
+				pr_readRestaurantDB;
+				pr_readEmployeeShiftsDB;
+				pr_readEmployeeSkillDB;
+				pr_readDemandDB;
+			}
+		}
+		Procedure pr_writeAll;
+		Section DB_Skills {
+			DatabaseTable db_readSkills {
+				DataSource: sp_connectionString;
+				TableName: "skill";
+				Mapping: {
+					"id"     -->i_sk,
+					"active" -->p_activeSkill( i_sk )
+				}
+			}
+			Procedure pr_readSkillDB {
+				Body: {
+					read from table db_readSkills;
+				}
+			}
+		}
+		Section DB_Shifts {
+			DatabaseTable db_readShifts {
+				DataSource: sp_connectionString;
+				TableName: "shift";
+				Mapping: {
+					"id"         -->i_sh,
+					"active"     -->p_activeShift(i_sh),
+					"start_time" -->p_startTime(i_sh)
+				}
+			}
+			Procedure pr_readShiftDB {
+				Body: {
+					read from table db_readShifts;
+				}
+			}
+		}
+		Section DB_Employee {
+			DatabaseTable db_readEmployees {
+				DataSource: sp_connectionString;
+				TableName: "employee";
+				Mapping: {
+					"id"          -->i_empl,
+					"active"      -->p_activeEmployee(i_empl),
+					"description" -->sp_employeeDescription( i_empl )
+				}
+			}
+			Procedure pr_readEmployeeDB {
+				Body: {
+					read from table db_readEmployees;
+				}
+			}
+		}
+		Section DB_Restaurant {
+			DatabaseTable db_readRestaurants {
+				DataSource: sp_connectionString;
+				TableName: "restaurant";
+				Mapping: {
+					"id"          -->i_rest,
+					"active"      -->p_activeRestaurant(i_rest),
+					"description" -->sp_restaurantDescription(i_rest)
+				}
+			}
+			Procedure pr_readRestaurantDB {
+				Body: {
+					read from table db_readRestaurants;
+				}
+			}
+		}
+		Section DB_Employee_Shift {
+			DatabaseTable db_readEmployeeShifts {
+				DataSource: sp_connectionString;
+				TableName: "employee_shift";
+				Mapping: {
+					"employee_id" -->i_empl,
+					"shift_id"    -->i_sh,
+					"value"       -->p_employeeDoesShift
+				}
+			}
+			Procedure pr_readEmployeeShiftsDB {
+				Body: {
+					read from table db_readEmployeeShifts;
+				}
+			}
+		}
+		Section DB_Employee_Skill {
+			DatabaseTable db_readEmployeeSkills {
+				DataSource: sp_connectionString;
+				TableName: "employee_skill";
+				Mapping: {
+					"employee_id"      -->i_empl,
+					"skill_id"         -->i_sk,
+					"has_skill"        -->p_employeeHasSkill,
+					"skill_preference" -->p_employeeSkillPreference
+				}
+			}
+			Procedure pr_readEmployeeSkillDB {
+				Body: {
+					read from table db_readSkills;
+				}
+			}
+		}
+		Section DB_Demand {
+			DatabaseTable db_readDemands {
+				DataSource: sp_connectionString;
+				TableName: "demand";
+				Mapping: {
+					"restaurant_id" -->i_rest,
+					"skill_id"      -->i_sk,
+					"shift_id"      -->i_sh,
+					"demand"        -->p_demand
+				}
+			}
+			Procedure pr_readDemandDB {
+				Body: {
+					read from table db_readDemands;
+				}
+			}
+		}
+	}
 	Section OLD {
-		Section Input_Parameters {
-			Procedure EmptyNewName {
-				Body: {
-					Empty sp_newName;
-				}
-			}
-			Procedure GenerateName {
-				Body: {
-					generatedName := EmployeeName;
-					while (StringToElement(s_employees,generatedName,0) <> '') do
-					        generatedName := EmployeeName;
-					endwhile;
-					
-					sp_newName := generatedName;
-				}
-				StringParameter generatedName;
-			}
-			Procedure SaveEmployee {
-				Body: {
-					SetElementAdd(s_employees,ep_selectedEmployee,sp_newName);
-					p_employeeDoesShift(ep_selectedEmployee,i_sh) := p_newEmployeeShifts(i_sh);
-					p_employeeHasSkill(ep_selectedEmployee,i_sk) := p_newEmployeeSkills(i_sk);
-					p_employeeSkillPreference(ep_selectedEmployee,i_sk):= p_newEmployeeSkillPreference(i_sk);
-					
-					empty sp_newName, p_newEmployeeShifts, p_newEmployeeSkillPreference, p_newEmployeeSkills;
-				}
-			}
-			Procedure CancelEmployeeDialog {
-				Body: {
-					empty sp_newName, p_newEmployeeShifts, p_newEmployeeSkillPreference, p_newEmployeeSkills;
-				}
-			}
-			Procedure SaveRestaurant {
-				Body: {
-					SetElementAdd(s_restaurants,ep_selectedRestaurant,sp_newName);
-					p_demand(ep_selectedRestaurant,i_sh,i_sk) := p_newDemand(i_sh,i_sk);
-					
-					empty sp_newName, p_newDemand;
-				}
-			}
-			Procedure CancelRestaurantDialog {
-				Body: {
-					empty sp_newName, p_newDemand;
-				}
-			}
-		}
-		Parameter p_newDemand {
-			IndexDomain: (i_sh,i_sk);
-		}
-		Parameter p_newEmployeeShifts {
-			IndexDomain: (i_sh);
-			Range: binary;
-		}
-		Parameter p_newEmployeeSkills {
-			IndexDomain: (i_sk);
-			Range: binary;
-		}
-		Parameter p_newEmployeeSkillPreference {
-			IndexDomain: i_sk | p_newEmployeeSkills(i_sk);
-			Range: integer;
-		}
-		StringParameter sp_newName;
-		DeclarationSection Result_Overview_Declarations {
-			ElementParameter CompanyColor {
-				IndexDomain: (i_rest);
-				Range: AllColors;
-			}
-			ElementParameter SkillColor {
-				IndexDomain: (i_sk);
-				Range: AllColors;
-			}
-		}
 		DeclarationSection Initial_Data_Declaration {
 			Assertion Check_AtLeastOneSkill {
 				IndexDomain: i_empl;
@@ -430,11 +532,6 @@ Model Main_EmployeeAssignment {
 			
 			s_skills :=
 			   data{ Waiter, Cook, Cashier, 'Dish Washer', 'Table Cleaner' };
-			
-			SkillColor :=
-			   data { Waiter : red,  Cook : blue, Cashier : green,  'Dish Washer' : yellow, 'Table Cleaner' : 'light grey' };
-			
-			CompanyColor(i_rest) := Element(AllColors,ord(i_rest)+6);
 			
 			p_demand(i_rest,i_sh,i_sk) := round(Uniform(0,4));
 			p_employeeDoesShift(i_empl,i_sh) := round(uniform(0,1)/3*4);
