@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Page Version="4000" TimeStamp="2015-11-25 16:24:21">
+<Page Version="4000" TimeStamp="2022-06-23 12:53:13">
 	<Location top="23" left="4" bottom="644" right="768" />
 	<PageEditSize Type="Inherited">
 		<Size Width="772" Height="622" />
@@ -42,35 +42,35 @@
 		<Border Style="InShadow" Width="2" MarginTop="5" MarginRight="5" MarginBottom="5" MarginLeft="5" />
 		<Contents>
 			<Explicit_Identifier>
-				<Identifier ID="4110">EmployeeDoesShift( e, sh )</Identifier>
+				<Identifier ID="4110">p_employeeDoesShift( i_empl, i_sh )</Identifier>
 				<Title ID="4120">"Employee's Shift"</Title>
 				<Format>
 					<Show_Checkboxes ID="4315">"Yes"</Show_Checkboxes>
 				</Format>
 			</Explicit_Identifier>
 			<Explicit_Identifier>
-				<Identifier ID="4110">EmployeeHasSkill( e, sk )</Identifier>
+				<Identifier ID="4110">p_employeeHasSkill( i_empl, i_sk )</Identifier>
 				<Title ID="4120">"Employee's Skill"</Title>
 				<Format>
 					<Show_Checkboxes ID="4315">"Yes"</Show_Checkboxes>
 				</Format>
 			</Explicit_Identifier>
 			<Explicit_Identifier>
-				<Identifier ID="4110">EmployeeSkillPreference( e, sk )</Identifier>
+				<Identifier ID="4110">p_employeeSkillPreference( i_empl, i_sk )</Identifier>
 				<Title ID="4120">"Employee Skill Preference"</Title>
 			</Explicit_Identifier>
 		</Contents>
 		<Indices>
 			<Explicit_Index>
-				<Index ID="6510">sh</Index>
+				<Index ID="6510">i_sh</Index>
 				<Header_Title ID="6530">"Shift"</Header_Title>
 			</Explicit_Index>
 			<Explicit_Index>
-				<Index ID="6510">e</Index>
+				<Index ID="6510">i_empl</Index>
 				<Header_Title ID="6530">"Employee"</Header_Title>
 			</Explicit_Index>
 			<Explicit_Index>
-				<Index ID="6510">sk</Index>
+				<Index ID="6510">i_sk</Index>
 				<Header_Title ID="6530">"Skill"</Header_Title>
 			</Explicit_Index>
 		</Indices>
@@ -107,10 +107,10 @@
 		<Border Style="InShadow" Width="2" MarginTop="5" MarginRight="5" MarginBottom="5" MarginLeft="5" />
 		<Contents>
 			<Explicit_Identifier>
-				<Identifier ID="4110">Demand( r, sh, sk )</Identifier>
+				<Identifier ID="4110">p_demand( i_rest, i_sh, i_sk )</Identifier>
 			</Explicit_Identifier>
 			<Explicit_Identifier>
-				<Identifier ID="4110">Unfulfilled( r, sh, sk )</Identifier>
+				<Identifier ID="4110">v_unfulfilled( i_rest, i_sh, i_sk )</Identifier>
 				<Colors>
 					<Background_Color ID="4160">RGB e7ceff</Background_Color>
 					<Text_Color ID="4165">257CED91-8909-41AC-BED6-911268D7BBCE blue</Text_Color>
@@ -119,15 +119,15 @@
 		</Contents>
 		<Indices>
 			<Explicit_Index>
-				<Index ID="6510">r</Index>
+				<Index ID="6510">i_rest</Index>
 				<Header_Title ID="6530">"Company"</Header_Title>
 			</Explicit_Index>
 			<Explicit_Index>
-				<Index ID="6510">sk</Index>
+				<Index ID="6510">i_sk</Index>
 				<Header_Title ID="6530">"Skill"</Header_Title>
 			</Explicit_Index>
 			<Explicit_Index>
-				<Index ID="6510">sh</Index>
+				<Index ID="6510">i_sh</Index>
 				<Header_Title ID="6530">"Shift"</Header_Title>
 			</Explicit_Index>
 		</Indices>
@@ -164,7 +164,7 @@
 		<Border Style="InShadow" Width="2" MarginTop="5" MarginRight="5" MarginBottom="5" MarginLeft="5" />
 		<Contents>
 			<Explicit_Identifier>
-				<Identifier ID="4110">Assignment( r, e, sh, sk )</Identifier>
+				<Identifier ID="4110">v_assignment( i_rest, i_empl, i_sh, i_sk )</Identifier>
 				<Colors>
 					<Background_Color ID="4160">RGB e7ceff</Background_Color>
 					<Text_Color ID="4165">257CED91-8909-41AC-BED6-911268D7BBCE blue</Text_Color>
@@ -173,19 +173,19 @@
 		</Contents>
 		<Indices>
 			<Explicit_Index>
-				<Index ID="6510">sh</Index>
+				<Index ID="6510">i_sh</Index>
 				<Header_Title ID="6530">"Shift"</Header_Title>
 			</Explicit_Index>
 			<Explicit_Index>
-				<Index ID="6510">r</Index>
+				<Index ID="6510">i_rest</Index>
 				<Header_Title ID="6530">"Company"</Header_Title>
 			</Explicit_Index>
 			<Explicit_Index>
-				<Index ID="6510">e</Index>
+				<Index ID="6510">i_empl</Index>
 				<Header_Title ID="6530">"Employee"</Header_Title>
 			</Explicit_Index>
 			<Explicit_Index>
-				<Index ID="6510">sk</Index>
+				<Index ID="6510">i_sk</Index>
 				<Header_Title ID="6530">"Skill"</Header_Title>
 			</Explicit_Index>
 		</Indices>
@@ -378,18 +378,18 @@
 	</PageObject>
 	<UsedReferences>
 		<Model>
-			<Symbol>Demand</Symbol>
-			<Symbol>EmployeeHasSkill</Symbol>
-			<Symbol>EmployeeSkillPreference</Symbol>
-			<Symbol>EmployeeDoesShift</Symbol>
-			<Symbol>Assignment</Symbol>
-			<Symbol>Unfulfilled</Symbol>
+			<Symbol>p_demand</Symbol>
+			<Symbol>p_employeeHasSkill</Symbol>
+			<Symbol>p_employeeSkillPreference</Symbol>
+			<Symbol>p_employeeDoesShift</Symbol>
+			<Symbol>v_assignment</Symbol>
+			<Symbol>v_unfulfilled</Symbol>
 			<Symbol>MainInitialization</Symbol>
 			<Symbol>MainExecution</Symbol>
-			<Symbol>r</Symbol>
-			<Symbol>e</Symbol>
-			<Symbol>sh</Symbol>
-			<Symbol>sk</Symbol>
+			<Symbol>i_sh</Symbol>
+			<Symbol>i_sk</Symbol>
+			<Symbol>i_rest</Symbol>
+			<Symbol>i_empl</Symbol>
 		</Model>
 	</UsedReferences>
 </Page>

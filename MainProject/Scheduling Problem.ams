@@ -13,17 +13,50 @@ Model Main_EmployeeAssignment {
 			}
 			Quantity SI_Time_Duration {
 				BaseUnit: s;
-				Conversions: minute->s : #-># * 60;
+				Conversions: {
+					minute->s : #-># * 60,
+					day->s : #-># * 86400
+				}
 				Comment: {
 					"Expresses the value for the duration of periods.
 					
 					The unit s has been added automatically because it is a required unit for AimmsWebUI.
 					
-					The unit minute has been added automatically because it is a required unit for AimmsWebUI."
+					The unit minute has been added automatically because it is a required unit for AimmsWebUI.
+					
+					The unit day has been added automatically because it is a required unit for calendar \"c_days\"."
 				}
 			}
 		}
 		Section Inputs {
+			Section Calendars {
+				Calendar c_days {
+					Index: i_day;
+					Unit: day;
+					BeginDate: sp_todayDate;
+					EndDate: sp_yearLaterDate;
+					TimeslotFormat: "%c%y-%m-%d";
+				}
+				StringParameter sp_todayDate {
+					Definition: {
+						CurrentToString("%c%y-%m-%d");
+					}
+				}
+				StringParameter sp_tomorrowDate {
+					Definition: {
+						MomentToString("%c%y-%m-%d",
+						    [day],
+						    sp_todayDate,
+						    1[day]);
+					}
+				}
+				StringParameter sp_yearLaterDate {
+					Definition: {
+						(val(CurrentToString("%c%y")) + 1)
+						+ CurrentToString("-%m-%d")
+					}
+				}
+			}
 			Section Shifts {
 				Set s_shifts {
 					Index: i_sh;
@@ -182,7 +215,12 @@ Model Main_EmployeeAssignment {
 				}
 			}
 		}
-		Section Outputs;
+		Section Outputs {
+			Parameter p_assignment {
+				IndexDomain: (i_rest, i_empl, i_sh, i_sk);
+				Definition: v_assignment(i_rest, i_empl, i_sh, i_sk);
+			}
+		}
 	}
 	Section UI_Declarations {
 		Procedure pr_empty;
@@ -242,7 +280,16 @@ Model Main_EmployeeAssignment {
 			}
 			Section Transactional_Page;
 			Section Results_Page;
-			Section Gantt_Page;
+			Section Gantt_Page {
+				Parameter p_restaurantStartTime {
+					IndexDomain: (i_rest, i_empl, i_sh, i_sk) | p_assignment(i_rest,i_empl,i_sh,i_sk);
+					Definition: p_startTime(i_sh);
+				}
+				Parameter p_restaurantDuration {
+					IndexDomain: (i_rest,i_empl,i_sh,i_sk) | p_assignment(i_rest,i_empl,i_sh,i_sk);
+					Definition: 8;
+				}
+			}
 		}
 		Section FlagsIdentifier {
 			StringParameter sp_readOnlyFlag {

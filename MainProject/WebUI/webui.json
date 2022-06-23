@@ -147,6 +147,99 @@
       "literal": "Custom_Master"
     }
   },
+  "layouts/custom_f8578cfe-4946-4ef3-ad7f-eca2d3945caa": {
+    "definition": {
+      "literal": {
+        "componentName": "Grid",
+        "props": {
+          "gridTemplateColumns": "1fr 1fr",
+          "gridTemplateRows": "1fr 1fr",
+          "gridTemplateAreas": "\"area-a area-b\" \"area-a area-c\""
+        },
+        "items": [
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-a",
+              "name": "Area A",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-b",
+              "name": "Area B",
+              "gridAutoFlow": "column"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-c",
+              "name": "Area C",
+              "gridAutoFlow": "row"
+            }
+          }
+        ]
+      }
+    },
+    "displayName": {
+      "literal": "Layout5 Copy"
+    }
+  },
+  "pages/gantt": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "tbl_calculatedSchedule",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetstbl_calculatedSchedule1"
+        },
+        {
+          "widgetUri": "gnt_assignementPerRestaurant",
+          "gridArea": "area-b",
+          "dndId": "area-bgnt_assignementPerRestaurant0"
+        },
+        {
+          "widgetUri": "gnt_assignmentPerEmployee",
+          "gridArea": "area-c",
+          "dndId": "area-cgnt_assignmentPerEmployee2"
+        }
+      ]
+    },
+    "layoutId": {
+      "literal": "custom_f8578cfe-4946-4ef3-ad7f-eca2d3945caa"
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "gnt_assignementPerRestaurant",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "gnt_assignmentPerEmployee",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "tbl_calculatedSchedule",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    }
+  },
   "pages/home": {
     "aimms.widget.type": {
       "literal": "pagev2-grid"
@@ -258,14 +351,19 @@
     "bindings": {
       "literal": [
         {
-          "widgetUri": "tbl_calculatedSchedule",
+          "widgetUri": "cbc_demandFulfillment",
           "gridArea": "area-b",
-          "dndId": "Unassigned widgetstbl_calculatedSchedule1"
+          "dndId": "area-bcbc_demandFulfillment0"
         },
         {
           "widgetUri": "tbl_scheduledTasks",
           "gridArea": "area-a",
-          "dndId": "area-atbl_scheduledTasks0"
+          "dndId": "area-atbl_scheduledTasks1"
+        },
+        {
+          "widgetUri": "cbc_demandFulfillment_1",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetscbc_demandFulfillment_12"
         }
       ]
     },
@@ -279,7 +377,14 @@
           }
         },
         {
-          "uri": "tbl_calculatedSchedule",
+          "uri": "cbc_demandFulfillment",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "cbc_demandFulfillment_1",
           "layoutInfo": {
             "width": "2",
             "height": "1"
@@ -365,6 +470,454 @@
       ]
     }
   },
+  "widgets/cbc_demandFulfillment": {
+    "aimms.widget.type": {
+      "literal": "combinationchart"
+    },
+    "contents.__display_order__": {
+      "literal": [
+        "contents.0",
+        "contents.1"
+      ]
+    },
+    "contents.0.identifier": {
+      "literal": {
+        "identifier": "p_demand",
+        "slice": [
+          {
+            "index": "i_rest",
+            "type": "free",
+            "value": "i_rest"
+          },
+          {
+            "index": "i_sh",
+            "type": "free",
+            "value": "i_sh"
+          },
+          {
+            "index": "i_sk",
+            "type": "free",
+            "value": "i_sk"
+          }
+        ]
+      }
+    },
+    "contents.1.identifier": {
+      "literal": {
+        "identifier": "v_unfulfilled",
+        "slice": [
+          {
+            "index": "i_rest",
+            "type": "free",
+            "value": "i_rest"
+          },
+          {
+            "index": "i_sh",
+            "type": "free",
+            "value": "i_sh"
+          },
+          {
+            "index": "i_sk",
+            "type": "free",
+            "value": "i_sk"
+          }
+        ]
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "header": [
+          "i_rest"
+        ],
+        "grouped": [
+          "<IDENTIFIER-SET>"
+        ],
+        "stacked": [],
+        "aggregated": [
+          "i_sk",
+          "i_sh"
+        ]
+      }
+    },
+    "indices.__display_order__": {
+      "literal": [
+        "indices.0"
+      ]
+    },
+    "indices.0.index": {
+      "literal": "i_rest"
+    },
+    "indices.0.storefocus": {
+      "literal": {
+        "identifier": "ep_selectedRestaurant"
+      }
+    },
+    "legend.show": {
+      "literal": true
+    },
+    "name": {
+      "literal": "cbc_demandFulfillment"
+    },
+    "title": {
+      "literal": "Demand Fulfillment "
+    }
+  },
+  "widgets/cbc_demandFulfillment_1": {
+    "aimms.widget.type": {
+      "literal": "combinationchart"
+    },
+    "contents.__display_order__": {
+      "literal": [
+        "contents.0",
+        "contents.1"
+      ]
+    },
+    "contents.0.displaydomain": {
+      "literal": "1"
+    },
+    "contents.0.identifier": {
+      "literal": {
+        "identifier": "p_demand",
+        "slice": [
+          {
+            "index": "i_rest",
+            "type": "element-parameter",
+            "value": "ep_selectedRestaurant"
+          },
+          {
+            "index": "i_sh",
+            "type": "free",
+            "value": "i_sh"
+          },
+          {
+            "index": "i_sk",
+            "type": "free",
+            "value": "i_sk"
+          }
+        ]
+      }
+    },
+    "contents.1.displaydomain": {
+      "literal": "1"
+    },
+    "contents.1.identifier": {
+      "literal": {
+        "identifier": "v_unfulfilled",
+        "slice": [
+          {
+            "index": "i_rest",
+            "type": "element-parameter",
+            "value": "ep_selectedRestaurant"
+          },
+          {
+            "index": "i_sh",
+            "type": "free",
+            "value": "i_sh"
+          },
+          {
+            "index": "i_sk",
+            "type": "free",
+            "value": "i_sk"
+          }
+        ]
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "header": [
+          "i_rest",
+          "i_sk",
+          "i_sh"
+        ],
+        "grouped": [
+          "<IDENTIFIER-SET>"
+        ],
+        "stacked": [],
+        "aggregated": []
+      }
+    },
+    "indices.__display_order__": {
+      "literal": [
+        "indices.0"
+      ]
+    },
+    "legend.show": {
+      "literal": false
+    },
+    "name": {
+      "literal": "cbc_demandFulfillmentDetailed"
+    },
+    "title": {
+      "literal": "Demand Fulfillment per Restaurant"
+    }
+  },
+  "widgets/gnt_assignementPerRestaurant": {
+    "aimms.widget.type": {
+      "literal": "ganttchart"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_restaurantStartTime",
+          "p_restaurantDuration"
+        ],
+        "prefix": "aimms",
+        "partition": {
+          "resources": [
+            "i_rest",
+            "i_sh"
+          ],
+          "jobs": [
+            "i_empl",
+            "i_sk",
+            "<IDENTIFIER-SET>"
+          ],
+          "aggregated": []
+        },
+        "slices": [
+          {
+            "identifier": "p_restaurantDuration",
+            "slice": [
+              {
+                "index": "i_rest",
+                "type": "element-parameter",
+                "value": "ep_selectedRestaurant"
+              },
+              {
+                "index": "i_empl",
+                "type": "free",
+                "value": "i_empl"
+              },
+              {
+                "index": "i_sh",
+                "type": "free",
+                "value": "i_sh"
+              },
+              {
+                "index": "i_sk",
+                "type": "free",
+                "value": "i_sk"
+              }
+            ]
+          },
+          {
+            "identifier": "p_restaurantStartTime",
+            "slice": [
+              {
+                "index": "i_rest",
+                "type": "element-parameter",
+                "value": "ep_selectedRestaurant"
+              },
+              {
+                "index": "i_empl",
+                "type": "free",
+                "value": "i_empl"
+              },
+              {
+                "index": "i_sh",
+                "type": "free",
+                "value": "i_sh"
+              },
+              {
+                "index": "i_sk",
+                "type": "free",
+                "value": "i_sk"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "resources": [
+          "i_rest",
+          "i_empl"
+        ],
+        "jobs": [
+          "i_sk",
+          "<IDENTIFIER-SET>"
+        ],
+        "aggregated": [
+          "i_sh"
+        ]
+      }
+    },
+    "name": {
+      "literal": "gnt_assignementPerRestaurant"
+    },
+    "time.reference": {
+      "aimms": {
+        "contents": [
+          "sp_todayDate"
+        ]
+      }
+    },
+    "time.resolution": {
+      "literal": 1
+    },
+    "time.timeline": {
+      "literal": 0
+    },
+    "time.viewport.end": {
+      "aimms": {
+        "contents": [
+          "sp_tomorrowDate"
+        ]
+      }
+    },
+    "time.viewport.start": {
+      "aimms": {
+        "contents": [
+          "sp_todayDate"
+        ]
+      }
+    },
+    "timezone": {
+      "aimms": {
+        "contents": [
+          "webui::DisplayTimeZone"
+        ]
+      }
+    },
+    "title": {
+      "literal": "Restaurant Schedule"
+    }
+  },
+  "widgets/gnt_assignmentPerEmployee": {
+    "aimms.widget.type": {
+      "literal": "ganttchart"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_restaurantStartTime",
+          "p_restaurantDuration"
+        ],
+        "prefix": "aimms",
+        "partition": {
+          "resources": [
+            "i_empl"
+          ],
+          "jobs": [
+            "i_rest",
+            "i_sk",
+            "<IDENTIFIER-SET>"
+          ],
+          "aggregated": [
+            "i_sh"
+          ]
+        },
+        "slices": [
+          {
+            "identifier": "p_restaurantDuration",
+            "slice": [
+              {
+                "index": "i_rest",
+                "type": "free",
+                "value": "i_rest"
+              },
+              {
+                "index": "i_empl",
+                "type": "element-parameter",
+                "value": "ep_selectedEmployee"
+              },
+              {
+                "index": "i_sh",
+                "type": "free",
+                "value": "i_sh"
+              },
+              {
+                "index": "i_sk",
+                "type": "free",
+                "value": "i_sk"
+              }
+            ]
+          },
+          {
+            "identifier": "p_restaurantStartTime",
+            "slice": [
+              {
+                "index": "i_rest",
+                "type": "free",
+                "value": "i_rest"
+              },
+              {
+                "index": "i_empl",
+                "type": "element-parameter",
+                "value": "ep_selectedEmployee"
+              },
+              {
+                "index": "i_sh",
+                "type": "free",
+                "value": "i_sh"
+              },
+              {
+                "index": "i_sk",
+                "type": "free",
+                "value": "i_sk"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "contents.partition": {
+      "literal": {
+        "resources": [
+          "i_empl",
+          "i_rest"
+        ],
+        "jobs": [
+          "<IDENTIFIER-SET>",
+          "i_sk"
+        ],
+        "aggregated": [
+          "i_sh"
+        ]
+      }
+    },
+    "name": {
+      "literal": "gnt_assignmentPerEmployee"
+    },
+    "time.reference": {
+      "aimms": {
+        "contents": [
+          "sp_todayDate"
+        ]
+      }
+    },
+    "time.resolution": {
+      "literal": 1
+    },
+    "time.timeline": {
+      "literal": 0
+    },
+    "time.viewport.end": {
+      "aimms": {
+        "contents": [
+          "sp_tomorrowDate"
+        ]
+      }
+    },
+    "time.viewport.start": {
+      "aimms": {
+        "contents": [
+          "sp_todayDate"
+        ]
+      }
+    },
+    "timezone": {
+      "aimms": {
+        "contents": [
+          "webui::DisplayTimeZone"
+        ]
+      }
+    },
+    "title": {
+      "literal": "Employee Schedule"
+    }
+  },
   "widgets/img_homeLogo": {
     "aimms.widget.type": {
       "literal": "image"
@@ -391,8 +944,123 @@
         ]
       }
     },
+    "contents.partition": {
+      "literal": {
+        "rowHeader": [
+          "i_rest",
+          "i_empl",
+          "i_sk"
+        ],
+        "colHeader": [
+          "i_sh"
+        ],
+        "aggregated": [
+          "<IDENTIFIER-SET>"
+        ]
+      }
+    },
+    "custom.column.widths": {
+      "literal": [
+        {
+          "type": "rowHeader",
+          "colKey": "i_sh",
+          "width": 20.34
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_rest": "Full Moon Restaurant"
+          },
+          "width": 27.16
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_rest": "Pancake Heaven"
+          },
+          "width": 21.66
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_rest": "Pizza House"
+          },
+          "width": 19.1
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_rest": "Restaurant At The Corner"
+          },
+          "width": 32.26
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_rest": "Smiling Cat Irish Pub"
+          },
+          "width": 27.81
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_rest": "Vegetable Garden"
+          },
+          "width": 25.11
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_rest": "Black Bull Steak Restaurant"
+          },
+          "width": 31.38
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "i_rest",
+          "width": 34.78
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "i_empl",
+          "width": 19.42
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "i_sk",
+          "width": 21.03
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sh": "Night"
+          },
+          "width": 13.15
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sh": "Morning"
+          },
+          "width": 15.48
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sh": "Afternoon"
+          },
+          "width": 13.95
+        }
+      ]
+    },
     "name": {
       "literal": "tbl_calculatedSchedule"
+    },
+    "store.focus.in": {
+      "literal": {
+        "i_rest": "ep_selectedRestaurant",
+        "i_empl": "ep_selectedEmployee"
+      }
     },
     "title": {
       "literal": "Calculated Schedule"
@@ -737,11 +1405,61 @@
         "contents": [
           "p_demand",
           "v_unfulfilled"
-        ]
+        ],
+        "prefix": "aimms",
+        "partition": {
+          "rowHeader": [
+            "i_rest",
+            "i_sh"
+          ],
+          "colHeader": [
+            "i_sk",
+            "<IDENTIFIER-SET>"
+          ],
+          "aggregated": []
+        },
+        "slices": []
       }
+    },
+    "contents.partition": {
+      "literal": {
+        "rowHeader": [
+          "i_sh",
+          "i_sk",
+          "<IDENTIFIER-SET>"
+        ],
+        "colHeader": [
+          "i_rest"
+        ],
+        "aggregated": []
+      }
+    },
+    "custom.column.widths": {
+      "literal": [
+        {
+          "type": "rowHeader",
+          "colKey": "i_rest",
+          "width": 35.05
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "i_sh",
+          "width": 16.72
+        },
+        {
+          "type": "rowHeader",
+          "colKey": "i_sk",
+          "width": 16.64
+        }
+      ]
     },
     "name": {
       "literal": "tbl_scheduledTasks"
+    },
+    "store.focus.in": {
+      "literal": {
+        "i_rest": "ep_selectedRestaurant"
+      }
     },
     "title": {
       "literal": "Scheduled Tasks"
