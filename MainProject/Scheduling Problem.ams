@@ -93,9 +93,11 @@ Model Main_EmployeeAssignment {
 				StringParameter sp_restaurantDescription {
 					IndexDomain: i_rest;
 				}
-				Parameter p_demand {
-					IndexDomain: (i_rest,i_sh,i_sk);
-					Text: "The needed number of skilled employees in the restaurants";
+				DeclarationSection Demand {
+					Parameter p_demand {
+						IndexDomain: (i_rest,i_sh,i_sk);
+						Text: "The needed number of skilled employees in the restaurants";
+					}
 				}
 			}
 			Section Employees {
@@ -110,19 +112,23 @@ Model Main_EmployeeAssignment {
 				StringParameter sp_employeeDescription {
 					IndexDomain: i_empl;
 				}
-				Parameter p_employeeHasSkill {
-					IndexDomain: (i_empl,i_sk);
-					Text: "Employees\' skills";
-					Range: binary;
+				DeclarationSection Employee_Shift {
+					Parameter p_employeeDoesShift {
+						IndexDomain: (i_empl,i_sh);
+						Text: "Employees\' availability for shifts";
+						Range: binary;
+					}
 				}
-				Parameter p_employeeSkillPreference {
-					IndexDomain: (i_empl,i_sk) | p_employeeHasSkill(i_empl,i_sk);
-					Text: "Job preferences of the employees (lower number means preferred position)";
-				}
-				Parameter p_employeeDoesShift {
-					IndexDomain: (i_empl,i_sh);
-					Text: "Employees\' availability for shifts";
-					Range: binary;
+				DeclarationSection Employee_Skill {
+					Parameter p_employeeSkillPreference {
+						IndexDomain: (i_empl,i_sk) | p_employeeHasSkill(i_empl,i_sk);
+						Text: "Job preferences of the employees (lower number means preferred position)";
+					}
+					Parameter p_employeeHasSkill {
+						IndexDomain: (i_empl,i_sk);
+						Text: "Employees\' skills";
+						Range: binary;
+					}
 				}
 			}
 		}
@@ -341,7 +347,7 @@ Model Main_EmployeeAssignment {
 				SQLCreateConnectionString (
 				    DatabaseInterface              :  'odbc',
 				    DriverName                     :  "SQLite3 ODBC Driver",
-				    DatabaseName                   :  "test.db", !The path of your database
+				    DatabaseName                   :  "inputs.db", !The path of your database
 				    AdditionalConnectionParameters :  "") ;
 			}
 		}
@@ -356,7 +362,17 @@ Model Main_EmployeeAssignment {
 				pr_readDemandDB;
 			}
 		}
-		Procedure pr_writeAll;
+		Procedure pr_writeAll {
+			Body: {
+				pr_writeSkillDB;
+				pr_writeShiftDB;
+				pr_writeEmployeeDB;
+				pr_writeRestaurantDB;
+				pr_writeEmployeeShiftsDB;
+				pr_writeEmployeeSkillDB;
+				pr_writeDemandDB;
+			}
+		}
 		Section DB_Skills {
 			DatabaseTable db_readSkills {
 				DataSource: sp_connectionString;
@@ -368,7 +384,15 @@ Model Main_EmployeeAssignment {
 			}
 			Procedure pr_readSkillDB {
 				Body: {
+					empty Skills;
+					
 					read from table db_readSkills;
+				}
+			}
+			Procedure pr_writeSkillDB {
+				Body: {
+					write p_activeSkill(i_sk)
+					    to table db_readSkills in dense mode;
 				}
 			}
 		}
@@ -384,7 +408,15 @@ Model Main_EmployeeAssignment {
 			}
 			Procedure pr_readShiftDB {
 				Body: {
+					empty Shifts;
 					read from table db_readShifts;
+				}
+			}
+			Procedure pr_writeShiftDB {
+				Body: {
+					write p_activeShift(i_sh), 
+					        p_startTime(i_sh)
+					    to table db_readShifts in dense mode;
 				}
 			}
 		}
@@ -400,7 +432,16 @@ Model Main_EmployeeAssignment {
 			}
 			Procedure pr_readEmployeeDB {
 				Body: {
+					empty Employees;
+					
 					read from table db_readEmployees;
+				}
+			}
+			Procedure pr_writeEmployeeDB {
+				Body: {
+					write sp_employeeDescription(i_empl), 
+					        p_activeEmployee(i_empl) 
+					    to table db_readEmployees in dense mode;
 				}
 			}
 		}
@@ -416,7 +457,16 @@ Model Main_EmployeeAssignment {
 			}
 			Procedure pr_readRestaurantDB {
 				Body: {
+					empty Restaurants;
+					
 					read from table db_readRestaurants;
+				}
+			}
+			Procedure pr_writeRestaurantDB {
+				Body: {
+					write sp_restaurantDescription(i_rest), 
+					        p_activeRestaurant(i_rest)
+					    to table db_readRestaurants in dense mode;
 				}
 			}
 		}
@@ -427,12 +477,20 @@ Model Main_EmployeeAssignment {
 				Mapping: {
 					"employee_id" -->i_empl,
 					"shift_id"    -->i_sh,
-					"value"       -->p_employeeDoesShift
+					"value"       -->p_employeeDoesShift(i_empl, i_sh)
 				}
 			}
 			Procedure pr_readEmployeeShiftsDB {
 				Body: {
+					empty Employee_Shift;
+					
 					read from table db_readEmployeeShifts;
+				}
+			}
+			Procedure pr_writeEmployeeShiftsDB {
+				Body: {
+					write p_employeeDoesShift(i_empl, i_sh)
+					    to table db_readEmployeeShifts in dense mode;
 				}
 			}
 		}
@@ -449,7 +507,16 @@ Model Main_EmployeeAssignment {
 			}
 			Procedure pr_readEmployeeSkillDB {
 				Body: {
-					read from table db_readSkills;
+					empty Employee_Skill;
+					
+					read from table db_readEmployeeSkills;
+				}
+			}
+			Procedure pr_writeEmployeeSkillDB {
+				Body: {
+					write p_employeeHasSkill(i_empl, i_sk),
+					        p_employeeSkillPreference(i_empl, i_sk)
+					    to table db_readEmployeeSkills in dense mode;
 				}
 			}
 		}
@@ -466,7 +533,15 @@ Model Main_EmployeeAssignment {
 			}
 			Procedure pr_readDemandDB {
 				Body: {
+					empty Demand;
+					
 					read from table db_readDemands;
+				}
+			}
+			Procedure pr_writeDemandDB {
+				Body: {
+					write p_demand(i_rest, i_sh, i_sk)
+					    to table db_readDemands in dense mode;
 				}
 			}
 		}

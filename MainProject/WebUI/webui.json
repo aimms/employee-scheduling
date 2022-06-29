@@ -1353,10 +1353,18 @@
         {
           "type": "colHeader",
           "colKey": {
+            "i_sk": "Waiter",
+            "i_sh": "Night"
+          },
+          "width": 12.73
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
             "i_sk": "Dish Washer",
             "i_sh": "Night"
           },
-          "width": 17.67
+          "width": 16.57
         },
         {
           "type": "colHeader",
@@ -1364,7 +1372,15 @@
             "i_sk": "Dish Washer",
             "i_sh": "Morning"
           },
-          "width": 18.08
+          "width": 17.38
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "i_sk": "Table Cleaner",
+            "i_sh": "Night"
+          },
+          "width": 17.75
         },
         {
           "type": "colHeader",
@@ -1372,15 +1388,7 @@
             "i_sk": "Dish Washer",
             "i_sh": "Afternoon"
           },
-          "width": 13.95
-        },
-        {
-          "type": "colHeader",
-          "colKey": {
-            "i_sk": "Waiter",
-            "i_sh": "Night"
-          },
-          "width": 12.73
+          "width": 17.29
         }
       ]
     },
