@@ -154,6 +154,55 @@
       "literal": "Custom_Master"
     }
   },
+  "layouts/custom_7f1b943f-0b41-4ed0-981f-9210aa749825": {
+    "definition": {
+      "literal": {
+        "componentName": "Grid",
+        "props": {
+          "gridTemplateColumns": "1fr 1fr 1fr 1fr",
+          "gridTemplateRows": "1fr",
+          "gridTemplateAreas": "\"area-a area-b area-c area-d\" \"area-a area-b area-c area-d\""
+        },
+        "items": [
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-a",
+              "name": "Area A",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-b",
+              "name": "Area B",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-c",
+              "name": "Area C",
+              "gridAutoFlow": "row"
+            }
+          },
+          {
+            "componentName": "WidgetArea",
+            "props": {
+              "gridArea": "area-d",
+              "name": "Area D",
+              "gridAutoFlow": "column"
+            }
+          }
+        ]
+      }
+    },
+    "displayName": {
+      "literal": "Custom_Master"
+    }
+  },
   "layouts/custom_f8578cfe-4946-4ef3-ad7f-eca2d3945caa": {
     "definition": {
       "literal": {
@@ -294,29 +343,34 @@
     "bindings": {
       "literal": [
         {
-          "widgetUri": "tbl_companies",
-          "gridArea": "area-a",
-          "dndId": "area-atbl_companies1"
-        },
-        {
           "widgetUri": "tbl_employees",
-          "gridArea": "area-a",
-          "dndId": "area-atbl_employees2"
+          "gridArea": "area-b",
+          "dndId": "area-btbl_employees0"
         },
         {
           "widgetUri": "tbl_shifts",
-          "gridArea": "area-a",
-          "dndId": "area-atbl_shifts3"
+          "gridArea": "area-c",
+          "dndId": "area-dtbl_shifts2"
+        },
+        {
+          "widgetUri": "gnt_shiftGantt",
+          "gridArea": "area-c",
+          "dndId": "area-cgnt_shiftGantt1"
         },
         {
           "widgetUri": "tbl_skills",
+          "gridArea": "area-d",
+          "dndId": "area-dtbl_skills3"
+        },
+        {
+          "widgetUri": "tbl_companies",
           "gridArea": "area-a",
-          "dndId": "Unassigned widgetstbl_skills0"
+          "dndId": "area-atbl_companies4"
         }
       ]
     },
     "layoutId": {
-      "literal": "custom_53477475-5859-4b30-8764-0784256aff19"
+      "literal": "custom_7f1b943f-0b41-4ed0-981f-9210aa749825"
     },
     "secondarypageactions": {
       "aimms": {
@@ -367,6 +421,13 @@
         },
         {
           "uri": "tbl_skills",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        },
+        {
+          "uri": "gnt_shiftGantt",
           "layoutInfo": {
             "width": "2",
             "height": "1"
@@ -1022,6 +1083,56 @@
       "literal": "Employee Schedule"
     }
   },
+  "widgets/gnt_shiftGantt": {
+    "aimms.widget.type": {
+      "literal": "ganttchart"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "p_startTime",
+          "p_duration"
+        ]
+      }
+    },
+    "name": {
+      "literal": "gnt_shiftGantt"
+    },
+    "time.reference": {
+      "aimms": {
+        "contents": [
+          "sp_todayDate"
+        ]
+      }
+    },
+    "time.resolution": {
+      "literal": 1
+    },
+    "time.timeline": {
+      "literal": 0
+    },
+    "time.viewport.end": {
+      "aimms": {
+        "contents": [
+          "sp_tomorrowDate"
+        ]
+      }
+    },
+    "time.viewport.start": {
+      "aimms": {
+        "contents": [
+          "sp_todayDate"
+        ]
+      }
+    },
+    "timezone": {
+      "aimms": {
+        "contents": [
+          "webui::DisplayTimeZone"
+        ]
+      }
+    }
+  },
   "widgets/img_homeLogo": {
     "aimms.widget.type": {
       "literal": "image"
@@ -1046,7 +1157,7 @@
         "contents": [
           "ep_programStatus",
           "p_gap",
-          "p_numberOfContraints",
+          "p_numberOfConstraints",
           "p_numberOfVariables",
           "p_solutionTime",
           "v_totalCost"
@@ -1238,7 +1349,7 @@
           "colKey": {
             "<IDENTIFIER-SET>": "sp_restaurantDescription"
           },
-          "width": 32.11
+          "width": 32.98
         }
       ]
     },
@@ -1264,6 +1375,9 @@
       "literal": {
         "p_demand": "1"
       }
+    },
+    "contents.numdecimals": {
+      "literal": 0
     },
     "contents.partition": {
       "literal": {
@@ -1617,15 +1731,20 @@
       "aimms": {
         "contents": [
           "p_activeShift",
-          "p_startTime"
+          "p_startTime",
+          "p_duration"
         ]
       }
     },
     "contents.displaydomain": {
       "literal": {
         "p_activeshift": "1",
-        "p_starttime": "1"
+        "p_starttime": "1",
+        "p_duration": "1"
       }
+    },
+    "contents.numdecimals": {
+      "literal": 0
     },
     "contents.partition": {
       "literal": {
@@ -1688,6 +1807,9 @@
         "p_employeehasskill": "1",
         "p_employeeskillpreference": "p_employeeHasSkill "
       }
+    },
+    "contents.numdecimals": {
+      "literal": 0
     },
     "contents.partition": {
       "literal": {
