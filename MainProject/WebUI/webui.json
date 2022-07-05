@@ -38,7 +38,14 @@
                 "name": "home",
                 "slug": "home",
                 "type": "pagev2-grid",
-                "children": []
+                "children": [
+                  {
+                    "name": "CRUD",
+                    "type": "pagev2-grid-dialog",
+                    "slug": "crud",
+                    "children": []
+                  }
+                ]
               },
               {
                 "name": "Story",
@@ -242,6 +249,37 @@
     },
     "displayName": {
       "literal": "Custom_Gantt"
+    }
+  },
+  "pages/crud": {
+    "aimms.widget.type": {
+      "literal": "pagev2-grid-dialog"
+    },
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "scl_newRestaurant",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetsscl_newRestaurant0"
+        }
+      ]
+    },
+    "maxcolumns": {
+      "literal": 1
+    },
+    "maxrows": {
+      "literal": 1
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "scl_newRestaurant",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
     }
   },
   "pages/gantt": {
@@ -1168,6 +1206,24 @@
       "literal": "scl_modelInformation"
     }
   },
+  "widgets/scl_newRestaurant": {
+    "aimms.widget.type": {
+      "literal": "scalar"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "sp_addEditElement"
+        ]
+      }
+    },
+    "contents.labels.visible": {
+      "literal": 0
+    },
+    "name": {
+      "literal": "scl_addEditElement"
+    }
+  },
   "widgets/tbl_calculatedSchedule": {
     "aimms.widget.type": {
       "literal": "table"
@@ -1330,6 +1386,35 @@
         "aggregated": []
       }
     },
+    "contextmenu": {
+      "aimms": {
+        "contents": [
+          "sp_restaurantItemActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_restaurantItemActions",
+            "slice": [
+              {
+                "index": "webui::indexWidgetItemActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetItemActionSpec"
+              },
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexWidgetActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetActionSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "custom.column.widths": {
       "literal": [
         {
@@ -1355,6 +1440,11 @@
     },
     "name": {
       "literal": "tbl_restaurants"
+    },
+    "store.focus.in": {
+      "literal": {
+        "i_rest": "ep_selectedRestaurant"
+      }
     },
     "title": {
       "literal": "Restaurants"
@@ -1612,6 +1702,35 @@
         "aggregated": []
       }
     },
+    "contextmenu": {
+      "aimms": {
+        "contents": [
+          "sp_employeeItemActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_employeeItemActions",
+            "slice": [
+              {
+                "index": "webui::indexWidgetItemActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetItemActionSpec"
+              },
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexWidgetActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetActionSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "custom.column.widths": {
       "literal": [
         {
@@ -1637,6 +1756,11 @@
     },
     "name": {
       "literal": "tbl_employees"
+    },
+    "store.focus.in": {
+      "literal": {
+        "i_empl": "ep_selectedEmployee"
+      }
     },
     "title": {
       "literal": "Employees"
@@ -1757,6 +1881,35 @@
         "aggregated": []
       }
     },
+    "contextmenu": {
+      "aimms": {
+        "contents": [
+          "sp_shiftItemActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_shiftItemActions",
+            "slice": [
+              {
+                "index": "webui::indexWidgetItemActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetItemActionSpec"
+              },
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexWidgetActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetActionSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "custom.column.widths": {
       "literal": [
         {
@@ -1777,6 +1930,13 @@
             "<IDENTIFIER-SET>": "p_startTime"
           },
           "width": 16.35
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "<IDENTIFIER-SET>": "p_duration"
+          },
+          "width": 13.95
         }
       ]
     },
@@ -1785,6 +1945,11 @@
     },
     "show.units": {
       "literal": 1
+    },
+    "store.focus.in": {
+      "literal": {
+        "i_sh": "ep_selectedShift"
+      }
     },
     "title": {
       "literal": "Shifts"
@@ -1906,6 +2071,35 @@
         "aggregated": []
       }
     },
+    "contextmenu": {
+      "aimms": {
+        "contents": [
+          "sp_skillItemActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_skillItemActions",
+            "slice": [
+              {
+                "index": "webui::indexWidgetItemActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetItemActionSpec"
+              },
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexWidgetActionSpec",
+                "type": "free",
+                "value": "webui::indexWidgetActionSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "custom.column.widths": {
       "literal": [
         {
@@ -1924,6 +2118,11 @@
     },
     "name": {
       "literal": "tbl_skills"
+    },
+    "store.focus.in": {
+      "literal": {
+        "i_sk": "ep_selectedSkill"
+      }
     },
     "title": {
       "literal": "Skills"

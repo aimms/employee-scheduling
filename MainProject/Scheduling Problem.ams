@@ -78,7 +78,6 @@ Model Main_EmployeeAssignment {
 				}
 				Parameter p_duration {
 					IndexDomain: (i_sh);
-					InitialData: 8;
 				}
 			}
 			Section Skills {
@@ -197,7 +196,7 @@ Model Main_EmployeeAssignment {
 				}
 				Set s_loc_actions {
 					InitialData: {
-						{'Ok'}
+						{'OK'}
 					}
 				}
 			}
@@ -282,19 +281,24 @@ Model Main_EmployeeAssignment {
 			DeclarationSection Model_Information {
 				ElementParameter ep_programStatus {
 					Range: AllSolutionStates;
+					Property: NoSave;
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Parameter p_gap {
+					Property: NoSave;
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Parameter p_numberOfConstraints {
+					Property: NoSave;
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Parameter p_numberOfVariables {
+					Property: NoSave;
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Parameter p_solutionTime {
 					Unit: s;
+					Property: NoSave;
 					InitialData: 0;
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
@@ -337,11 +341,11 @@ Model Main_EmployeeAssignment {
 				}
 			}
 			Procedure pr_openRedirectPage {
-				Arguments: (arg1);
+				Arguments: (sp_loc_action);
 				Body: {
 					webui::OpenPage(pageId :  'results');
 				}
-				StringParameter arg1 {
+				StringParameter sp_loc_action {
 					Property: Input;
 				}
 			}
@@ -365,32 +369,303 @@ Model Main_EmployeeAssignment {
 			StringParameter sp_myWorkflowSteps {
 				IndexDomain: (webui::indexWorkflowOrder,webui::indexNoOfPages,webui::indexWorkflowPageSpec);
 				Definition: {
-					data 
-					{ ( 1, 1, displayText       ) : "Welcome"            ,  ( 1, 1, icon              ) : "aimms-happy"        ,
-					  ( 1, 1, pageId            ) : "home"               ,  ( 1, 1, tooltip           ) : "welcome"            ,
-					  ( 1, 1, workflowPageState ) : "active"             ,  ( 1, 1, pageDataState     ) : "Incomplete"         ,
-					  ( 1, 1, redirectPageId    ) : "home"               ,  ( 1, 2, displayText       ) : "Story"              ,
-					  ( 1, 2, icon              ) : "aimms-lamp5"        ,  ( 1, 2, pageId            ) : "story"              ,
-					  ( 1, 2, tooltip           ) : "Problem description",  ( 1, 2, workflowPageState ) : "active"             ,
-					  ( 1, 2, pageDataState     ) : "Incomplete"         ,  ( 1, 2, redirectPageId    ) : "home"               ,
-					  ( 1, 3, displayText       ) : "Master"             ,  ( 1, 3, icon              ) : "aimms-equalizer2"   ,
-					  ( 1, 3, pageId            ) : "inputs"             ,  ( 1, 3, tooltip           ) : "Master data"        ,
-					  ( 1, 3, workflowPageState ) : "active"             ,  ( 1, 3, pageDataState     ) : "Incomplete"         ,
-					  ( 1, 3, redirectPageId    ) : "home"               ,  ( 1, 4, displayText       ) : "Transactional"      ,
-					  ( 1, 4, icon              ) : "aimms-equalizer2"   ,  ( 1, 4, pageId            ) : "transactional_data" ,
-					  ( 1, 4, tooltip           ) : "Transactional data" ,  ( 1, 4, workflowPageState ) : "active"             ,
-					  ( 1, 4, pageDataState     ) : "Incomplete"         ,  ( 1, 4, redirectPageId    ) : "home"               ,
-					  ( 1, 5, displayText       ) : "Results"            ,  ( 1, 5, icon              ) : "aimms-make-group"   ,
-					  ( 1, 5, pageId            ) : "results"            ,  ( 1, 5, tooltip           ) : "Model outputs"      ,
-					  ( 1, 5, workflowPageState ) : "active",!if (not p_solutionTime) then "inactive" else "active" endif,
-					  ( 1, 5, pageDataState     ) : "Incomplete"         ,
-					  ( 1, 5, redirectPageId    ) : "home"               ,  ( 1, 6, displayText       ) : "Gantt"              ,
-					  ( 1, 6, icon              ) : "aimms-wall"         ,  ( 1, 6, pageId            ) : "gantt"              ,
-					  ( 1, 6, tooltip           ) : "Gantt chart"        ,  ( 1, 6, workflowPageState ) : "active",!if (not p_solutionTime) then "inactive" else "active" endif,
-					  ( 1, 6, pageDataState     ) : "Incomplete"         ,  ( 1, 6, redirectPageId    ) : "home"                }
+					{ ( '1', '1', 'displayText'       ) : "Welcome"            ,
+					  ( '1', '1', 'icon'              ) : "aimms-happy"        ,
+					  ( '1', '1', 'pageId'            ) : "home"               ,  
+					  ( '1', '1', 'tooltip'           ) : "welcome"            ,
+					  ( '1', '1', 'workflowPageState' ) : "active"             ,  
+					  ( '1', '1', 'pageDataState'     ) : "Incomplete"         ,
+					  ( '1', '1', 'redirectPageId'    ) : "home"               ,  
+					  ( '1', '2', 'displayText'       ) : "Story"              ,
+					  ( '1', '2', 'icon'              ) : "aimms-lamp5"        ,  
+					  ( '1', '2', 'pageId'            ) : "story"              ,
+					  ( '1', '2', 'tooltip'           ) : "Problem description",  
+					  ( '1', '2', 'workflowPageState' ) : "active"             ,
+					  ( '1', '2', 'pageDataState'     ) : "Incomplete"         ,  
+					  ( '1', '2', 'redirectPageId'    ) : "home"               ,
+					  ( '1', '3', 'displayText'       ) : "Master"             ,  
+					  ( '1', '3', 'icon'              ) : "aimms-equalizer2"   ,
+					  ( '1', '3', 'pageId'            ) : "inputs"             ,  
+					  ( '1', '3', 'tooltip'           ) : "Master data"        ,
+					  ( '1', '3', 'workflowPageState' ) : "active"             ,  
+					  ( '1', '3', 'pageDataState'     ) : "Incomplete"         ,
+					  ( '1', '3', 'redirectPageId'    ) : "home"               ,  
+					  ( '1', '4', 'displayText'       ) : "Transactional"      ,
+					  ( '1', '4', 'icon'              ) : "aimms-equalizer2"   ,  
+					  ( '1', '4', 'pageId'            ) : "transactional_data" ,
+					  ( '1', '4', 'tooltip'           ) : "Transactional data" ,  
+					  ( '1', '4', 'workflowPageState' ) : "active"             ,
+					  ( '1', '4', 'pageDataState'     ) : "Incomplete"         ,  
+					  ( '1', '4', 'redirectPageId'    ) : "home"               ,
+					  ( '1', '5', 'displayText'       ) : "Results"            ,  
+					  ( '1', '5', 'icon'              ) : "aimms-make-group"   ,
+					  ( '1', '5', 'pageId'            ) : "results"            ,  
+					  ( '1', '5', 'tooltip'           ) : "Model outputs"      ,
+					  ( '1', '5', 'workflowPageState' ) : if (not p_solutionTime) then "inactive" else "active" endif,
+					  ( '1', '5', 'pageDataState'     ) : "Incomplete"         ,
+					  ( '1', '5', 'redirectPageId'    ) : "home"               ,  
+					  ( '1', '6', 'displayText'       ) : "Gantt"              ,
+					  ( '1', '6', 'icon'              ) : "aimms-wall"         ,  
+					  ( '1', '6', 'pageId'            ) : "gantt"              ,
+					  ( '1', '6', 'tooltip'           ) : "Gantt chart"        ,  
+					  ( '1', '6', 'workflowPageState' ) : if (not p_solutionTime) then "inactive" else "active" endif,
+					  ( '1', '6', 'pageDataState'     ) : "Incomplete"         ,  
+					  ( '1', '6', 'redirectPageId'    ) : "home"                }
 				}
-				Comment: {
-					"\"active\",!if (not p_solutionTime) then \"inactive\" else \"active\" endif,"
+			}
+		}
+		Section CRUD {
+			StringParameter sp_addEditElement;
+			Section CRUD_Restaurant {
+				Procedure pr_openAddRestaurant {
+					Body: {
+						empty sp_addEditElement;
+						
+						webui::OpenDialogPage(
+							pageId  :  'crud', 
+							title   :  "Add Restaurant", 
+							actions :  s_loc_actions, 
+							onDone  :  'pr_addRestaurant');
+					}
+					Set s_loc_actions {
+						InitialData: {
+							{'Cancel', 'OK'}
+						}
+					}
+				}
+				Procedure pr_addRestaurant {
+					Arguments: sp_arg_action;
+					Body: {
+						if sp_arg_action = 'OK' then
+						    ep_selectedRestaurant := StringToElement(s_restaurants, sp_addEditElement, 1);
+						endif;
+					}
+					StringParameter sp_arg_action {
+						Property: Input;
+					}
+				}
+				Procedure pr_openEditRestaurant {
+					Body: {
+						sp_addEditElement := ep_selectedRestaurant;
+						
+						webui::OpenDialogPage(
+							pageId  :  'crud', 
+							title   :  "Edit Restaurant", 
+							actions :  s_loc_actions, 
+							onDone  :  'pr_editRestaurant');
+					}
+					Set s_loc_actions {
+						InitialData: {
+							{'Cancel', 'OK'}
+						}
+					}
+				}
+				Procedure pr_editRestaurant {
+					Arguments: sp_arg_action;
+					Body: {
+						if sp_arg_action = 'OK' then
+						    SetElementRename(s_restaurants, ep_selectedRestaurant, sp_addEditElement);
+						endif;
+					}
+					StringParameter sp_arg_action {
+						Property: Input;
+					}
+				}
+				Procedure pr_deleteRestaurant {
+					Body: {
+						s_restaurants -= ep_selectedRestaurant;
+						
+						ep_selectedRestaurant := first(i_rest);
+					}
+				}
+			}
+			Section CRUD_Employee {
+				Procedure pr_openAddEmployee {
+					Body: {
+						empty sp_addEditElement;
+						
+						webui::OpenDialogPage(
+							pageId  :  'crud', 
+							title   :  "Add Employee", 
+							actions :  s_loc_actions, 
+							onDone  :  'pr_addEmployee');
+					}
+					Set s_loc_actions {
+						InitialData: {
+							{'Cancel', 'OK'}
+						}
+					}
+				}
+				Procedure pr_addEmployee {
+					Arguments: sp_arg_action;
+					Body: {
+						if sp_arg_action = 'OK' then
+						    ep_selectedEmployee := StringToElement(s_Employees, sp_addEditElement, 1);
+						endif;
+					}
+					StringParameter sp_arg_action {
+						Property: Input;
+					}
+				}
+				Procedure pr_openEditEmployee {
+					Body: {
+						sp_addEditElement := ep_selectedEmployee;
+						
+						webui::OpenDialogPage(
+							pageId  :  'crud', 
+							title   :  "Edit Employee", 
+							actions :  s_loc_actions, 
+							onDone  :  'pr_editEmployee');
+					}
+					Set s_loc_actions {
+						InitialData: {
+							{'Cancel', 'OK'}
+						}
+					}
+				}
+				Procedure pr_editEmployee {
+					Arguments: sp_arg_action;
+					Body: {
+						if sp_arg_action = 'OK' then
+						    SetElementRename(s_Employees, ep_selectedEmployee, sp_addEditElement);
+						endif;
+					}
+					StringParameter sp_arg_action {
+						Property: Input;
+					}
+				}
+				Procedure pr_deleteEmployee {
+					Body: {
+						s_Employees -= ep_selectedEmployee;
+						
+						ep_selectedEmployee := first(i_empl);
+					}
+				}
+			}
+			Section CRUD_Shift {
+				Procedure pr_openAddShift {
+					Body: {
+						empty sp_addEditElement;
+						
+						webui::OpenDialogPage(
+							pageId  :  'crud', 
+							title   :  "Add Shift", 
+							actions :  s_loc_actions, 
+							onDone  :  'pr_addShift');
+					}
+					Set s_loc_actions {
+						InitialData: {
+							{'Cancel', 'OK'}
+						}
+					}
+				}
+				Procedure pr_addShift {
+					Arguments: sp_arg_action;
+					Body: {
+						if sp_arg_action = 'OK' then
+						    ep_selectedShift := StringToElement(s_Shifts, sp_addEditElement, 1);
+						endif;
+					}
+					StringParameter sp_arg_action {
+						Property: Input;
+					}
+				}
+				Procedure pr_openEditShift {
+					Body: {
+						sp_addEditElement := ep_selectedShift;
+						
+						webui::OpenDialogPage(
+							pageId  :  'crud', 
+							title   :  "Edit Shift", 
+							actions :  s_loc_actions, 
+							onDone  :  'pr_editShift');
+					}
+					Set s_loc_actions {
+						InitialData: {
+							{'Cancel', 'OK'}
+						}
+					}
+				}
+				Procedure pr_editShift {
+					Arguments: sp_arg_action;
+					Body: {
+						if sp_arg_action = 'OK' then
+						    SetElementRename(s_Shifts, ep_selectedShift, sp_addEditElement);
+						endif;
+					}
+					StringParameter sp_arg_action {
+						Property: Input;
+					}
+				}
+				Procedure pr_deleteShift {
+					Body: {
+						s_Shifts -= ep_selectedShift;
+						
+						ep_selectedShift := first(i_sh);
+					}
+				}
+			}
+			Section CRUD_Skill {
+				Procedure pr_openAddSkill {
+					Body: {
+						empty sp_addEditElement;
+						
+						webui::OpenDialogPage(
+							pageId  :  'crud', 
+							title   :  "Add Skill", 
+							actions :  s_loc_actions, 
+							onDone  :  'pr_addSkill');
+					}
+					Set s_loc_actions {
+						InitialData: {
+							{'Cancel', 'OK'}
+						}
+					}
+				}
+				Procedure pr_addSkill {
+					Arguments: sp_arg_action;
+					Body: {
+						if sp_arg_action = 'OK' then
+						    ep_selectedSkill := StringToElement(s_Skills, sp_addEditElement, 1);
+						endif;
+					}
+					StringParameter sp_arg_action {
+						Property: Input;
+					}
+				}
+				Procedure pr_openEditSkill {
+					Body: {
+						sp_addEditElement := ep_selectedSkill;
+						
+						webui::OpenDialogPage(
+							pageId  :  'crud', 
+							title   :  "Edit Skill", 
+							actions :  s_loc_actions, 
+							onDone  :  'pr_editSkill');
+					}
+					Set s_loc_actions {
+						InitialData: {
+							{'Cancel', 'OK'}
+						}
+					}
+				}
+				Procedure pr_editSkill {
+					Arguments: sp_arg_action;
+					Body: {
+						if sp_arg_action = 'OK' then
+						    SetElementRename(s_Skills, ep_selectedSkill, sp_addEditElement);
+						endif;
+					}
+					StringParameter sp_arg_action {
+						Property: Input;
+					}
+				}
+				Procedure pr_deleteSkill {
+					Body: {
+						s_Skills -= ep_selectedSkill;
+						
+						ep_selectedSkill := first(i_sk);
+					}
 				}
 			}
 		}
@@ -401,7 +676,7 @@ Model Main_EmployeeAssignment {
 						IndexDomain: (webui::indexPageExtension,webui::indexPageActionSpec);
 						Definition: {
 							data 
-							{ ( 1, displaytext ) : "Import"                ,  ( 1, icon        ) : "aimms-database-insert" ,
+							{ ( 1, displayText ) : "Import"                ,  ( 1, icon        ) : "aimms-database-insert" ,
 							  ( 1, procedure   ) : "pr_readAll"            ,  ( 1, state       ) : "active"                ,
 							  ( 2, displaytext ) : "Export"                ,  ( 2, icon        ) : "aimms-database-export" ,
 							  ( 2, procedure   ) : "pr_writeAll"           ,  ( 2, state       ) : "active"                ,
@@ -409,6 +684,102 @@ Model Main_EmployeeAssignment {
 							  ( 3, procedure   ) : "pr_randomizeData"      ,  ( 3, state       ) : "active"                ,
 							  ( 4, displaytext ) : "Solve"                 ,  ( 4, icon        ) : "aimms-cog"             ,
 							  ( 4, procedure   ) : "pr_runModel"           ,  ( 4, state       ) : "active"                 }
+						}
+					}
+					StringParameter sp_restaurantItemActions {
+						IndexDomain: (webui::indexWidgetItemActionSpec,webui::indexPageExtension,webui::indexWidgetActionSpec);
+						Definition: {
+							data 
+							{ ( p_activeRestaurant      , 1, displaytext ) : "Add",
+							  ( p_activeRestaurant      , 1, icon        ) : "aimms-plus3",
+							  ( p_activeRestaurant      , 1, procedure   ) : "pr_openAddRestaurant",
+							  ( p_activeRestaurant      , 1, state       ) : "active",
+							  ( p_activeRestaurant      , 2, displaytext ) : "Edit",
+							  ( p_activeRestaurant      , 2, icon        ) : "aimms-pencil2",
+							  ( p_activeRestaurant      , 2, procedure   ) : "pr_openEditRestaurant",
+							  ( p_activeRestaurant      , 2, state       ) : "active",
+							  ( p_activeRestaurant      , 3, displaytext ) : "Delete",
+							  ( p_activeRestaurant      , 3, icon        ) : "aimms-eraser2",
+							  ( p_activeRestaurant      , 3, procedure   ) : "pr_deleteRestaurant",
+							  ( p_activeRestaurant      , 3, state       ) : "active",
+							  ( sp_restaurantDescription, 1, displaytext ) : "Add",
+							  ( sp_restaurantDescription, 1, icon        ) : "aimms-plus3",
+							  ( sp_restaurantDescription, 1, procedure   ) : "pr_openAddRestaurant",
+							  ( sp_restaurantDescription, 1, state       ) : "active",
+							  ( sp_restaurantDescription, 2, displaytext ) : "Edit",
+							  ( sp_restaurantDescription, 2, icon        ) : "aimms-pencil2",
+							  ( sp_restaurantDescription, 2, procedure   ) : "pr_openEditRestaurant",
+							  ( sp_restaurantDescription, 2, state       ) : "active",
+							  ( sp_restaurantDescription, 3, displaytext ) : "Delete",
+							  ( sp_restaurantDescription, 3, icon        ) : "aimms-eraser2",
+							  ( sp_restaurantDescription, 3, procedure   ) : "pr_deleteRestaurant",
+							  ( sp_restaurantDescription, 3, state       ) : "active" }
+						}
+					}
+					StringParameter sp_employeeItemActions {
+						IndexDomain: (webui::indexWidgetItemActionSpec,webui::indexPageExtension,webui::indexWidgetActionSpec);
+						Definition: {
+							data 
+							{ ( p_activeEmployee      , 1, displaytext ) : "Add",
+							  ( p_activeEmployee      , 1, icon        ) : "aimms-plus3",
+							  ( p_activeEmployee      , 1, procedure   ) : "pr_openAddEmployee",
+							  ( p_activeEmployee      , 1, state       ) : "active",
+							  ( p_activeEmployee      , 2, displaytext ) : "Edit",
+							  ( p_activeEmployee      , 2, icon        ) : "aimms-pencil2",
+							  ( p_activeEmployee      , 2, procedure   ) : "pr_openEditEmployee",
+							  ( p_activeEmployee      , 2, state       ) : "active",
+							  ( p_activeEmployee      , 3, displaytext ) : "Delete",
+							  ( p_activeEmployee      , 3, icon        ) : "aimms-eraser2",
+							  ( p_activeEmployee      , 3, procedure   ) : "pr_deleteEmployee",
+							  ( p_activeEmployee      , 3, state       ) : "active",
+							  ( sp_employeeDescription, 1, displaytext ) : "Add",
+							  ( sp_employeeDescription, 1, icon        ) : "aimms-plus3",
+							  ( sp_employeeDescription, 1, procedure   ) : "pr_openAddEmployee",
+							  ( sp_employeeDescription, 1, state       ) : "active",
+							  ( sp_employeeDescription, 2, displaytext ) : "Edit",
+							  ( sp_employeeDescription, 2, icon        ) : "aimms-pencil2",
+							  ( sp_employeeDescription, 2, procedure   ) : "pr_openEditEmployee",
+							  ( sp_employeeDescription, 2, state       ) : "active",
+							  ( sp_employeeDescription, 3, displaytext ) : "Delete",
+							  ( sp_employeeDescription, 3, icon        ) : "aimms-eraser2",
+							  ( sp_employeeDescription, 3, procedure   ) : "pr_deleteEmployee",
+							  ( sp_employeeDescription, 3, state       ) : "active" }
+						}
+					}
+					StringParameter sp_shiftItemActions {
+						IndexDomain: (webui::indexWidgetItemActionSpec,webui::indexPageExtension,webui::indexWidgetActionSpec);
+						Definition: {
+							data 
+							{ ( p_activeShift, 1, displaytext ) : "Add"                  ,  ( p_activeShift, 1, icon        ) : "aimms-plus3"          ,
+							  ( p_activeShift, 1, procedure   ) : "pr_openAddShift" ,  ( p_activeShift, 1, state       ) : "active"               ,
+							  ( p_activeShift, 2, displaytext ) : "Edit"                 ,  ( p_activeShift, 2, icon        ) : "aimms-pencil2"        ,
+							  ( p_activeShift, 2, procedure   ) : "pr_openEditShift",  ( p_activeShift, 2, state       ) : "active"               ,
+							  ( p_activeShift, 3, displaytext ) : "Delete"               ,  ( p_activeShift, 3, icon        ) : "aimms-eraser2"        ,
+							  ( p_activeShift, 3, procedure   ) : "pr_deleteShift"  ,  ( p_activeShift, 3, state       ) : "active"               ,
+							  ( p_duration   , 1, displaytext ) : "Add"                  ,  ( p_duration   , 1, icon        ) : "aimms-plus3"          ,
+							  ( p_duration   , 1, procedure   ) : "pr_openAddShift" ,  ( p_duration   , 1, state       ) : "active"               ,
+							  ( p_duration   , 2, displaytext ) : "Edit"                 ,  ( p_duration   , 2, icon        ) : "aimms-pencil2"        ,
+							  ( p_duration   , 2, procedure   ) : "pr_openEditShift",  ( p_duration   , 2, state       ) : "active"               ,
+							  ( p_duration   , 3, displaytext ) : "Delete"               ,  ( p_duration   , 3, icon        ) : "aimms-eraser2"        ,
+							  ( p_duration   , 3, procedure   ) : "pr_deleteShift"  ,  ( p_duration   , 3, state       ) : "active"               ,
+							  ( p_startTime  , 1, displaytext ) : "Add"                  ,  ( p_startTime  , 1, icon        ) : "aimms-plus3"          ,
+							  ( p_startTime  , 1, procedure   ) : "pr_openAddShift" ,  ( p_startTime  , 1, state       ) : "active"               ,
+							  ( p_startTime  , 2, displaytext ) : "Edit"                 ,  ( p_startTime  , 2, icon        ) : "aimms-pencil2"        ,
+							  ( p_startTime  , 2, procedure   ) : "pr_openEditShift",  ( p_startTime  , 2, state       ) : "active"               ,
+							  ( p_startTime  , 3, displaytext ) : "Delete"               ,  ( p_startTime  , 3, icon        ) : "aimms-eraser2"        ,
+							  ( p_startTime  , 3, procedure   ) : "pr_deleteShift"  ,  ( p_startTime  , 3, state       ) : "active"                }
+						}
+					}
+					StringParameter sp_skillItemActions {
+						IndexDomain: (webui::indexWidgetItemActionSpec,webui::indexPageExtension,webui::indexWidgetActionSpec);
+						Definition: {
+							data 
+							{ ( p_activeSkill, 1, displaytext ) : "Add"                  ,  ( p_activeSkill, 1, icon        ) : "aimms-plus3"          ,
+							  ( p_activeSkill, 1, procedure   ) : "pr_openAddSkill" ,  ( p_activeSkill, 1, state       ) : "active"               ,
+							  ( p_activeSkill, 2, displaytext ) : "Edit"                 ,  ( p_activeSkill, 2, icon        ) : "aimms-pencil2"        ,
+							  ( p_activeSkill, 2, procedure   ) : "pr_openEditSkill",  ( p_activeSkill, 2, state       ) : "active"               ,
+							  ( p_activeSkill, 3, displaytext ) : "Delete"               ,  ( p_activeSkill, 3, icon        ) : "aimms-eraser2"        ,
+							  ( p_activeSkill, 3, procedure   ) : "pr_deleteSkill"  ,  ( p_activeSkill, 3, state       ) : "active"                }
 						}
 					}
 				}
@@ -449,7 +820,7 @@ Model Main_EmployeeAssignment {
 				}
 				Parameter p_restaurantDuration {
 					IndexDomain: (i_rest,i_empl,i_sh,i_sk) | p_assignment(i_rest,i_empl,i_sh,i_sk);
-					Definition: 8;
+					Definition: p_duration(i_sh);
 				}
 			}
 		}
@@ -521,7 +892,8 @@ Model Main_EmployeeAssignment {
 				Mapping: {
 					"id"         -->i_sh,
 					"active"     -->p_activeShift(i_sh),
-					"start_time" -->p_startTime(i_sh)
+					"start_time" -->p_startTime(i_sh),
+					"duration" -->p_duration(i_sh)
 				}
 			}
 			Procedure pr_readShiftDB {
@@ -533,7 +905,8 @@ Model Main_EmployeeAssignment {
 			Procedure pr_writeShiftDB {
 				Body: {
 					write p_activeShift(i_sh), 
-					        p_startTime(i_sh)
+					        p_startTime(i_sh),
+					        p_duration(i_sh)
 					    to table db_readShifts in dense mode;
 				}
 			}

@@ -9,6 +9,20 @@ external_string_character_encoding WINDOWS-1252
 memory_statistics off
 rounding_compatibility Aimms_3_7
 seed 123456
+* BARON 21
+* CBC 2.9
+* CONOPT 4.1
+* CPLEX 22.1
+* CPOptimizer 22.1
+* GUROBI 9.5
+* IPOPT 3.11
+* Knitro 12.3
+* MINOS
+* ODH-CPLEX 5.3
+* Octeract 4.3
+* PATH 4.7
+* SNOPT 7.2
+* NETSOL
 * Environment
 Project_Title "AIMMS - Employee Scheduling Problem"
-Startup_Page "AIMMS Demo"
+Open_WebUI_on_Startup 1
