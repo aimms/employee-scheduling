@@ -685,7 +685,7 @@
     },
     "contents.0.identifier": {
       "literal": {
-        "identifier": "p_demand",
+        "identifier": "p_fulfilledDemand",
         "slice": [
           {
             "index": "i_rest",
@@ -732,10 +732,10 @@
         "header": [
           "i_rest"
         ],
-        "grouped": [
+        "grouped": [],
+        "stacked": [
           "<IDENTIFIER-SET>"
         ],
-        "stacked": [],
         "aggregated": [
           "i_sk",
           "i_sh"
@@ -780,7 +780,7 @@
     },
     "contents.0.identifier": {
       "literal": {
-        "identifier": "p_demand",
+        "identifier": "p_fulfilledDemand",
         "slice": [
           {
             "index": "i_rest",
@@ -828,14 +828,15 @@
     "contents.partition": {
       "literal": {
         "header": [
-          "i_rest",
-          "i_sk",
-          "i_sh"
+          "i_sh",
+          "i_sk"
         ],
         "grouped": [
+          "i_rest"
+        ],
+        "stacked": [
           "<IDENTIFIER-SET>"
         ],
-        "stacked": [],
         "aggregated": []
       }
     },
@@ -851,7 +852,12 @@
       "literal": "cbc_demandFulfillmentDetailed"
     },
     "title": {
-      "literal": "Demand Fulfillment per Restaurant"
+      "aimms": {
+        "contents": [
+          "sp_demandFulfillmentTitle"
+        ],
+        "slices": []
+      }
     }
   },
   "widgets/gnt_assignementPerRestaurant": {
@@ -984,7 +990,12 @@
       }
     },
     "title": {
-      "literal": "Restaurant Schedule"
+      "aimms": {
+        "contents": [
+          "sp_restaurantTitle"
+        ],
+        "slices": []
+      }
     }
   },
   "widgets/gnt_assignmentPerEmployee": {
@@ -1118,7 +1129,12 @@
       }
     },
     "title": {
-      "literal": "Employee Schedule"
+      "aimms": {
+        "contents": [
+          "sp_employeeTitle"
+        ],
+        "slices": []
+      }
     }
   },
   "widgets/gnt_shiftGantt": {

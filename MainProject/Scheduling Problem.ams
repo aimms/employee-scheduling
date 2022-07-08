@@ -211,6 +211,7 @@ Model Main_EmployeeAssignment {
 				IndexDomain: (i_rest,i_sh,i_sk);
 				Text: "Unfulfilled positions";
 				Range: nonnegative;
+				webui::AnnotationsIdentifier: sp_unfulfilledDemandAnnotation;
 			}
 			Constraint c_satisfyDemand {
 				IndexDomain: (i_rest,i_sh,i_sk);
@@ -812,15 +813,38 @@ Model Main_EmployeeAssignment {
 						  ( 2, icon        ) : "aimms-info"       ,  ( 2, state       ) : "active"            }
 					}
 				}
+				Parameter p_fulfilledDemand {
+					IndexDomain: (i_rest, i_sh, i_sk);
+					Range: integer;
+					Definition: p_demand(i_rest, i_sh, i_sk) - v_unfulfilled(i_rest, i_sh, i_sk);
+					webui::AnnotationsIdentifier: sp_fulfilledDemandAnnotation;
+				}
+				StringParameter sp_demandFulfillmentTitle {
+					Definition: "Demand Fulfillment - " + ep_selectedRestaurant;
+				}
+				StringParameter sp_fulfilledDemandAnnotation {
+					Definition: "not-red";
+				}
+				StringParameter sp_unfulfilledDemandAnnotation {
+					Definition: "red";
+				}
 			}
 			Section Gantt_Page {
 				Parameter p_restaurantStartTime {
 					IndexDomain: (i_rest, i_empl, i_sh, i_sk) | p_assignment(i_rest,i_empl,i_sh,i_sk);
 					Definition: p_startTime(i_sh);
+					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Parameter p_restaurantDuration {
 					IndexDomain: (i_rest,i_empl,i_sh,i_sk) | p_assignment(i_rest,i_empl,i_sh,i_sk);
 					Definition: p_duration(i_sh);
+					webui::FlagsIdentifier: sp_readOnlyFlag;
+				}
+				StringParameter sp_restaurantTitle {
+					Definition: ep_selectedRestaurant + " Schedule";
+				}
+				StringParameter sp_employeeTitle {
+					Definition: ep_selectedEmployee + " Schedule";
 				}
 			}
 		}

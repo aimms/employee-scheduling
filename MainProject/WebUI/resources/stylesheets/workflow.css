@@ -17,6 +17,3 @@
   border: 1px solid var(--primaryDark);
 }
 
-input.boolean-cell-editor-contents {
-  accent-color: var(--primaryDark);
-}
