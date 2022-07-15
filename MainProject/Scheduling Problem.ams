@@ -275,9 +275,20 @@ Model Main_EmployeeAssignment {
 				Text: "The total cost of the schedule";
 				Definition: v_unfulfilledCost + v_notPreferenceCost;
 			}
+			Set s_employeeAssignmentConstraints {
+				SubsetOf: AllConstraints;
+				Definition: AllConstraints * Math_Model;
+			}
+			Set s_employeeAssignmentVariables {
+				SubsetOf: AllVariables;
+				Definition: AllVariables * Math_Model;
+			}
 			MathematicalProgram mp_minimizeCost {
 				Objective: v_totalCost;
 				Direction: minimize;
+				Constraints: s_employeeAssignmentConstraints;
+				Variables: s_employeeAssignmentVariables;
+				Type: Automatic;
 			}
 			DeclarationSection Model_Information {
 				ElementParameter ep_programStatus {
@@ -1061,11 +1072,19 @@ Model Main_EmployeeAssignment {
 			}
 		}
 	}
-	Procedure MainInitialization;
-	Procedure MainExecution;
-	Procedure MainTermination {
-		Body: {
-			return 1;
+	Section Application_initialization_and_termination {
+		Procedure MainInitialization;
+		Procedure PostMainInitialization;
+		Procedure MainExecution;
+		Procedure PreMainTermination {
+			Body: {
+				return 1 ;
+			}
+		}
+		Procedure MainTermination {
+			Body: {
+				return 1;
+			}
 		}
 	}
 }
