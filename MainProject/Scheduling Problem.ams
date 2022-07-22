@@ -226,7 +226,7 @@ Model Main_EmployeeAssignment {
 			}
 			Constraint c_assignmentSatisfiesShift {
 				IndexDomain: (i_empl,i_sh);
-				Text: "If the employee is aviable for a shift, then he or she can be assigned, else not";
+				Text: "If the employee is available for a shift, then he or she can be assigned, else not";
 				Definition: {
 					sum((i_rest,i_sk), v_assignment(i_rest,i_empl,i_sh,i_sk)) 
 					<= 
@@ -869,10 +869,13 @@ Model Main_EmployeeAssignment {
 		StringParameter sp_connectionString {
 			Definition: {
 				SQLCreateConnectionString (
-				    DatabaseInterface              :  'odbc',
-				    DriverName                     :  "SQLite3 ODBC Driver",
-				    DatabaseName                   :  "inputs.db", !The path of your database
-				    AdditionalConnectionParameters :  "") ;
+					DatabaseInterface              :  'odbc',
+					DriverName                     :  "SQLite3 ODBC Driver",
+					ServerName                     :  "", 
+					DatabaseName                   :  "inputs.db", !The path of your database
+					UserId                         :  "", 
+					Password                       :  "", 
+					AdditionalConnectionParameters :  "") ;
 			}
 		}
 		Procedure pr_readAll {
