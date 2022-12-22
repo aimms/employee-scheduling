@@ -427,7 +427,18 @@ Model Main_EmployeeAssignment {
 			}
 		}
 		Section CRUD {
-			StringParameter sp_addEditElement;
+			StringParameter sp_addEditElement {
+				webui::AnnotationsIdentifier: sp_annotationCRUD;
+			}
+			StringParameter sp_annotationCRUD {
+				Definition: {
+					if sp_addEditElement then 
+					    "green-input"
+					else 
+					    "red-input"
+					endif;
+				}
+			}
 			Section CRUD_Restaurant {
 				Procedure pr_openAddRestaurant {
 					Body: {
@@ -834,10 +845,10 @@ Model Main_EmployeeAssignment {
 					Definition: "Demand Fulfillment - " + ep_selectedRestaurant;
 				}
 				StringParameter sp_fulfilledDemandAnnotation {
-					Definition: "not-red";
+					Definition: "not-red-chart";
 				}
 				StringParameter sp_unfulfilledDemandAnnotation {
-					Definition: "red";
+					Definition: "red-chart";
 				}
 			}
 			Section Gantt_Page {
