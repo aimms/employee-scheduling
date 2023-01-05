@@ -699,14 +699,16 @@ Model Main_EmployeeAssignment {
 						IndexDomain: (webui::indexPageExtension,webui::indexPageActionSpec);
 						Definition: {
 							data 
-							{ ( 1, displayText ) : "Import"                ,  ( 1, icon        ) : "aimms-database-insert" ,
+							{ ( 1, displaytext ) : "Import"                ,  ( 1, icon        ) : "aimms-database-insert" ,
 							  ( 1, procedure   ) : "pr_readAll"            ,  ( 1, state       ) : "active"                ,
 							  ( 2, displaytext ) : "Export"                ,  ( 2, icon        ) : "aimms-database-export" ,
 							  ( 2, procedure   ) : "pr_writeAll"           ,  ( 2, state       ) : "active"                ,
 							  ( 3, displaytext ) : "Generate Random"       ,  ( 3, icon        ) : "aimms-database-refresh",
 							  ( 3, procedure   ) : "pr_randomizeData"      ,  ( 3, state       ) : "active"                ,
 							  ( 4, displaytext ) : "Solve"                 ,  ( 4, icon        ) : "aimms-cog"             ,
-							  ( 4, procedure   ) : "pr_runModel"           ,  ( 4, state       ) : "active"                 }
+							  ( 4, procedure   ) : "pr_runModel"           ,  ( 4, state       ) : "active"                ,
+							  ( 5, displaytext ) : "Save New Case"             ,  ( 5, icon        ) : "aimms-floppy-disk"     ,
+							  ( 5, procedure   ) : "pr_openSaveCaseDialog"                ,  ( 5, state       ) : "active"                 }
 						}
 					}
 					StringParameter sp_restaurantItemActions {
@@ -819,12 +821,22 @@ Model Main_EmployeeAssignment {
 							  ( 2, state       ) : "active"                ,  ( 3, displaytext ) : "Generate Random"       ,
 							  ( 3, icon        ) : "aimms-database-refresh",  ( 3, state       ) : "active"                ,
 							  ( 4, displaytext ) : "Solve"                 ,  ( 4, icon        ) : "aimms-cog"             ,
-							  ( 4, procedure   ) : "mainexecution"         ,  ( 4, state       ) : "active"                 }
+							  ( 4, procedure   ) : "mainexecution"         ,  ( 4, state       ) : "active"                ,
+							  ( 5, displaytext ) : "Save New Case"             ,  ( 5, icon        ) : "aimms-floppy-disk"     ,
+							  ( 5, procedure   ) : "pr_openSaveCaseDialog" ,  ( 5, state       ) : "active"                 }
 						}
 					}
 				}
 			}
 			Section Results_Page {
+				StringParameter sp_resultsSecondaryActions {
+					IndexDomain: (webui::indexPageExtension,webui::indexPageActionSpec);
+					Definition: {
+						data 
+						{ ( 1, displaytext ) : "Save New Case"            ,  ( 1, icon        ) : "aimms-floppy-disk"    ,
+						  ( 1, procedure   ) : "pr_openSaveCaseDialog",  ( 1, state       ) : "active"                }
+					}
+				}
 				StringParameter sp_resultsSidePanel {
 					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
 					Definition: {
@@ -852,6 +864,14 @@ Model Main_EmployeeAssignment {
 				}
 			}
 			Section Gantt_Page {
+				StringParameter sp_ganttSecondaryActions {
+					IndexDomain: (webui::indexPageExtension,webui::indexPageActionSpec);
+					Definition: {
+						data 
+						{ ( 1, displaytext ) : "Save New Case"            ,  ( 1, icon        ) : "aimms-floppy-disk"    ,
+						  ( 1, procedure   ) : "pr_openSaveCaseDialog",  ( 1, state       ) : "active"                }
+					}
+				}
 				Parameter p_restaurantStartTime {
 					IndexDomain: (i_rest, i_empl, i_sh, i_sk) | p_assignment(i_rest,i_empl,i_sh,i_sk);
 					Definition: p_startTime(i_sh);
@@ -867,6 +887,48 @@ Model Main_EmployeeAssignment {
 				}
 				StringParameter sp_employeeTitle {
 					Definition: ep_selectedEmployee + " Schedule";
+				}
+			}
+			Section Save_Case_DialogPage {
+				StringParameter sp_caseName {
+					InitialData: "<insert case name>";
+				}
+				Procedure pr_saveCase {
+					Arguments: sp_in_caseName;
+					Body: {
+						! Save the case in the folder "data".
+						if not DirectoryExists( "data" ) then
+						    DirectoryCreate("data");
+						endif ;
+						
+						CaseFileSave( "data\\" + sp_in_caseName + ".data", AllIdentifiers );
+					}
+					StringParameter sp_in_caseName {
+						Property: Input;
+					}
+				}
+				Procedure pr_openSaveCaseDialog {
+					Body: {
+						s_loc_actions := {'Cancel', 'OK'};
+						
+						webui::OpenDialogPage(
+							pageId  :  'save_case', 
+							title   :  "Save New Case", 
+							actions :  s_loc_actions, 
+							onDone  :  'pr_closingSaveCaseDialog');
+					}
+					Set s_loc_actions;
+				}
+				Procedure pr_closingSaveCaseDialog {
+					Arguments: (sp_in_action);
+					Body: {
+						if sp_in_action = "OK" then
+						    pr_saveCase(sp_in_caseName :  sp_caseName);
+						endif;
+					}
+					StringParameter sp_in_action {
+						Property: Input;
+					}
 				}
 			}
 		}

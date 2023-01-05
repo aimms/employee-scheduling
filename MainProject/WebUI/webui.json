@@ -83,6 +83,12 @@
                 "type": "pagev2-grid",
                 "slug": "gantt",
                 "children": []
+              },
+              {
+                "name": "Save Case",
+                "type": "pagev2-grid-dialog",
+                "slug": "save_case",
+                "children": []
               }
             ]
           }
@@ -308,6 +314,30 @@
     "layoutId": {
       "literal": "custom_f8578cfe-4946-4ef3-ad7f-eca2d3945caa"
     },
+    "secondarypageactions": {
+      "aimms": {
+        "contents": [
+          "sp_ganttSecondaryActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_ganttSecondaryActions",
+            "slice": [
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexPageActionSpec",
+                "type": "free",
+                "value": "webui::indexPageActionSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "widgets": {
       "literal": [
         {
@@ -522,6 +552,30 @@
         }
       ]
     },
+    "secondarypageactions": {
+      "aimms": {
+        "contents": [
+          "sp_resultsSecondaryActions"
+        ],
+        "slices": [
+          {
+            "identifier": "sp_resultsSecondaryActions",
+            "slice": [
+              {
+                "index": "webui::indexPageExtension",
+                "type": "free",
+                "value": "webui::indexPageExtension"
+              },
+              {
+                "index": "webui::indexPageActionSpec",
+                "type": "free",
+                "value": "webui::indexPageActionSpec"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "sidepanels": {
       "aimms": {
         "contents": [
@@ -570,6 +624,37 @@
           }
         }
       ]
+    }
+  },
+  "pages/save_case": {
+    "bindings": {
+      "literal": [
+        {
+          "widgetUri": "scl_caseName",
+          "gridArea": "area-a",
+          "dndId": "Unassigned widgetsscl_caseName0"
+        }
+      ]
+    },
+    "maxcolumns": {
+      "literal": 1
+    },
+    "maxrows": {
+      "literal": 1
+    },
+    "widgets": {
+      "literal": [
+        {
+          "uri": "scl_caseName",
+          "layoutInfo": {
+            "width": "2",
+            "height": "1"
+          }
+        }
+      ]
+    },
+    "aimms.widget.type": {
+      "literal": "pagev2-grid-dialog"
     }
   },
   "pages/story": {
@@ -1200,6 +1285,24 @@
     },
     "name": {
       "literal": "img_homeLogo"
+    }
+  },
+  "widgets/scl_caseName": {
+    "aimms.widget.type": {
+      "literal": "scalar"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "sp_caseName"
+        ]
+      }
+    },
+    "contents.labels.visible": {
+      "literal": 0
+    },
+    "name": {
+      "literal": "scl_caseName"
     }
   },
   "widgets/scl_modelInformation": {
