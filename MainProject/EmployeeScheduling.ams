@@ -1,6 +1,6 @@
 ## ams_version=1.0
 
-Model Main_EmployeeAssignment {
+Model Main_EmployeeScheduling {
 	Comment: {
 		"Keywords:
 		Employee assignment problem, scheduling."
@@ -75,9 +75,11 @@ Model Main_EmployeeAssignment {
 				}
 				Parameter p_startTime {
 					IndexDomain: (i_sh);
+					InitialData: 0;
 				}
 				Parameter p_duration {
 					IndexDomain: (i_sh);
+					InitialData: 0;
 				}
 			}
 			Section Skills {
@@ -122,6 +124,7 @@ Model Main_EmployeeAssignment {
 						IndexDomain: (i_rest,i_sh,i_sk);
 						Text: "The needed number of skilled employees in the restaurants";
 						Range: integer;
+						InitialData: 0;
 					}
 				}
 			}
@@ -381,53 +384,34 @@ Model Main_EmployeeAssignment {
 			StringParameter sp_myWorkflowSteps {
 				IndexDomain: (webui::indexWorkflowOrder,webui::indexNoOfPages,webui::indexWorkflowPageSpec);
 				Definition: {
-					{ ( '1', '1', 'displayText'       ) : "Welcome"            ,
-					  ( '1', '1', 'icon'              ) : "aimms-happy"        ,
-					  ( '1', '1', 'pageId'            ) : "home"               ,  
-					  ( '1', '1', 'tooltip'           ) : "welcome"            ,
-					  ( '1', '1', 'workflowPageState' ) : "active"             ,  
-					  ( '1', '1', 'pageDataState'     ) : "Incomplete"         ,
-					  ( '1', '1', 'redirectPageId'    ) : "home"               ,  
-					  ( '1', '2', 'displayText'       ) : "Story"              ,
-					  ( '1', '2', 'icon'              ) : "aimms-lamp5"        ,  
-					  ( '1', '2', 'pageId'            ) : "story"              ,
-					  ( '1', '2', 'tooltip'           ) : "Problem description",  
-					  ( '1', '2', 'workflowPageState' ) : "active"             ,
-					  ( '1', '2', 'pageDataState'     ) : "Incomplete"         ,  
-					  ( '1', '2', 'redirectPageId'    ) : "home"               ,
-					  ( '1', '3', 'displayText'       ) : "Master"             ,  
-					  ( '1', '3', 'icon'              ) : "aimms-equalizer2"   ,
-					  ( '1', '3', 'pageId'            ) : "inputs"             ,  
-					  ( '1', '3', 'tooltip'           ) : "Master data"        ,
-					  ( '1', '3', 'workflowPageState' ) : "active"             ,  
-					  ( '1', '3', 'pageDataState'     ) : "Incomplete"         ,
-					  ( '1', '3', 'redirectPageId'    ) : "home"               ,  
-					  ( '1', '4', 'displayText'       ) : "Transactional"      ,
-					  ( '1', '4', 'icon'              ) : "aimms-equalizer2"   ,  
-					  ( '1', '4', 'pageId'            ) : "transactional_data" ,
-					  ( '1', '4', 'tooltip'           ) : "Transactional data" ,  
-					  ( '1', '4', 'workflowPageState' ) : "active"             ,
-					  ( '1', '4', 'pageDataState'     ) : "Incomplete"         ,  
-					  ( '1', '4', 'redirectPageId'    ) : "home"               ,
-					  ( '1', '5', 'displayText'       ) : "Results"            ,  
-					  ( '1', '5', 'icon'              ) : "aimms-make-group"   ,
-					  ( '1', '5', 'pageId'            ) : "results"            ,  
-					  ( '1', '5', 'tooltip'           ) : "Model outputs"      ,
-					  ( '1', '5', 'workflowPageState' ) : if (not p_solutionTime) then "inactive" else "active" endif,
-					  ( '1', '5', 'pageDataState'     ) : "Incomplete"         ,
-					  ( '1', '5', 'redirectPageId'    ) : "home"               ,  
-					  ( '1', '6', 'displayText'       ) : "Gantt"              ,
-					  ( '1', '6', 'icon'              ) : "aimms-wall"         ,  
-					  ( '1', '6', 'pageId'            ) : "gantt"              ,
-					  ( '1', '6', 'tooltip'           ) : "Gantt chart"        ,  
-					  ( '1', '6', 'workflowPageState' ) : if (not p_solutionTime) then "inactive" else "active" endif,
-					  ( '1', '6', 'pageDataState'     ) : "Incomplete"         ,  
-					  ( '1', '6', 'redirectPageId'    ) : "home"                }
+					data 
+					{ ( 1, 1, displayText       ) : "Welcome"            ,  ( 1, 1, icon              ) : "aimms-happy"        ,
+					  ( 1, 1, pageId            ) : "home"               ,  ( 1, 1, tooltip           ) : "welcome"            ,
+					  ( 1, 1, workflowPageState ) : "active"             ,  ( 1, 1, pageDataState     ) : "Incomplete"         ,
+					  ( 1, 2, displayText       ) : "Story"              ,  ( 1, 2, icon              ) : "aimms-lamp5"        ,
+					  ( 1, 2, pageId            ) : "story"              ,  ( 1, 2, tooltip           ) : "Problem description",
+					  ( 1, 2, workflowPageState ) : "active"             ,  ( 1, 2, pageDataState     ) : "Incomplete"         ,
+					  ( 1, 2, redirectPageId    ) : "home"               ,  ( 1, 3, displayText       ) : "Master"             ,
+					  ( 1, 3, icon              ) : "aimms-equalizer2"   ,  ( 1, 3, pageId            ) : "inputs"             ,
+					  ( 1, 3, tooltip           ) : "Master data"        ,  ( 1, 3, workflowPageState ) : "active"             ,
+					  ( 1, 3, pageDataState     ) : "Incomplete"         ,  ( 1, 3, redirectPageId    ) : "home"               ,
+					  ( 1, 4, displayText       ) : "Transactional"      ,  ( 1, 4, icon              ) : "aimms-equalizer2"   ,
+					  ( 1, 4, pageId            ) : "transactional_data" ,  ( 1, 4, tooltip           ) : "Transactional data" ,
+					  ( 1, 4, workflowPageState ) : "active"             ,  ( 1, 4, pageDataState     ) : "Incomplete"         ,
+					  ( 1, 4, redirectPageId    ) : "home"               ,  ( 1, 5, displayText       ) : "Results"            ,
+					  ( 1, 5, icon              ) : "aimms-make-group"   ,  ( 1, 5, pageId            ) : "results"            ,
+					  ( 1, 5, tooltip           ) : "Model outputs"      ,  ( 1, 5, workflowPageState ) : "active"             ,
+					  ( 1, 5, pageDataState     ) : "Incomplete"         ,  ( 1, 5, redirectPageId    ) : "home"               ,
+					  ( 1, 6, displayText       ) : "Gantt"              ,  ( 1, 6, icon              ) : "aimms-wall"         ,
+					  ( 1, 6, pageId            ) : "gantt"              ,  ( 1, 6, tooltip           ) : "Gantt chart"        ,
+					  ( 1, 6, workflowPageState ) : "active"             ,  ( 1, 6, pageDataState     ) : "Incomplete"         ,
+					  ( 1, 6, redirectPageId    ) : "home"                }
 				}
 			}
 		}
 		Section CRUD {
 			StringParameter sp_addEditElement {
+				InitialData: "";
 				webui::AnnotationsIdentifier: sp_annotationCRUD;
 			}
 			StringParameter sp_annotationCRUD {
@@ -953,25 +937,73 @@ Model Main_EmployeeAssignment {
 		}
 		Procedure pr_readAll {
 			Body: {
-				pr_readSkillDB;
-				pr_readShiftDB;
-				pr_readEmployeeDB;
-				pr_readRestaurantDB;
-				pr_readEmployeeShiftsDB;
-				pr_readEmployeeSkillDB;
-				pr_readDemandDB;
+				!check if driver exists
+				p_loc_numberOfDrivers := SQLNumberOfDrivers('ODBC');
+				
+				while LoopCount <= p_loc_numberOfDrivers do
+				    sp_loc_driverName := SQLDriverName('ODBC', LoopCount);
+				
+				    if sp_loc_driverName = "SQLite3 ODBC Driver" then
+				        pr_readSkillDB;
+				        pr_readShiftDB;
+				        pr_readEmployeeDB;
+				        pr_readRestaurantDB;
+				        pr_readEmployeeShiftsDB;
+				        pr_readEmployeeSkillDB;
+				        pr_readDemandDB;
+				        break;
+				    endif;                
+				endwhile;
+				
+				s_loc_actions := {'Cancel'};
+				
+				if sp_loc_driverName <> "SQLite3 ODBC Driver" then
+				    webui::RequestPerformWebUIDialog(
+				            title   :  "Minimal Requirements", 
+				            message :  "Please install 'SQLite3 ODBC Driver' and try again.", 
+				            actions :  s_loc_actions, 
+				            onDone  :  'webui::NoOp1');
+				
+				endif;
 			}
+			Parameter p_loc_numberOfDrivers;
+			StringParameter sp_loc_driverName;
+			Set s_loc_actions;
 		}
 		Procedure pr_writeAll {
 			Body: {
-				pr_writeSkillDB;
-				pr_writeShiftDB;
-				pr_writeEmployeeDB;
-				pr_writeRestaurantDB;
-				pr_writeEmployeeShiftsDB;
-				pr_writeEmployeeSkillDB;
-				pr_writeDemandDB;
+				!check if driver exists
+				p_loc_numberOfDrivers := SQLNumberOfDrivers('ODBC');
+				
+				while LoopCount <= p_loc_numberOfDrivers do
+				    sp_loc_driverName := SQLDriverName('ODBC', LoopCount);
+				
+				    if sp_loc_driverName = "SQLite3 ODBC Driver" then
+				        pr_writeSkillDB;
+				        pr_writeShiftDB;
+				        pr_writeEmployeeDB;
+				        pr_writeRestaurantDB;
+				        pr_writeEmployeeShiftsDB;
+				        pr_writeEmployeeSkillDB;
+				        pr_writeDemandDB;
+				        break;
+				    endif;                
+				endwhile;
+				
+				s_loc_actions := {'Cancel'};
+				
+				if sp_loc_driverName <> "SQLite3 ODBC Driver" then
+				    webui::RequestPerformWebUIDialog(
+				            title   :  "Minimal Requirements", 
+				            message :  "Please install 'SQLite3 ODBC Driver' and try again.", 
+				            actions :  s_loc_actions, 
+				            onDone  :  'webui::NoOp1');
+				
+				endif;
 			}
+			Parameter p_loc_numberOfDrivers;
+			StringParameter sp_loc_driverName;
+			Set s_loc_actions;
 		}
 		Section DB_Skills {
 			DatabaseTable db_readSkills {
@@ -1150,7 +1182,12 @@ Model Main_EmployeeAssignment {
 	}
 	Section Application_initialization_and_termination {
 		Procedure MainInitialization;
-		Procedure PostMainInitialization;
+		Procedure PostMainInitialization {
+			Body: {
+				ep_selectedRestaurant := '';
+				ep_selectedEmployee := '';
+			}
+		}
 		Procedure MainExecution;
 		Procedure PreMainTermination {
 			Body: {
