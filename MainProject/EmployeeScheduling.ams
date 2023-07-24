@@ -691,8 +691,8 @@ Model Main_EmployeeScheduling {
 							  ( 3, procedure   ) : "pr_randomizeData"      ,  ( 3, state       ) : "active"                ,
 							  ( 4, displaytext ) : "Solve"                 ,  ( 4, icon        ) : "aimms-cog"             ,
 							  ( 4, procedure   ) : "pr_runModel"           ,  ( 4, state       ) : "active"                ,
-							  ( 5, displaytext ) : "Save New Case"             ,  ( 5, icon        ) : "aimms-floppy-disk"     ,
-							  ( 5, procedure   ) : "pr_openSaveCaseDialog"                ,  ( 5, state       ) : "active"                 }
+							  ( 5, displaytext ) : "Case Manager"             ,  ( 5, icon        ) : "aimms-floppy-disk"     ,
+							  ( 5, procedure   ) : "pr_openCaseManagerDialog"                ,  ( 5, state       ) : "active"                 }
 						}
 					}
 					StringParameter sp_restaurantItemActions {
@@ -800,14 +800,15 @@ Model Main_EmployeeScheduling {
 						Definition: {
 							data 
 							{ ( 1, displaytext ) : "Import"                ,  ( 1, icon        ) : "aimms-database-insert" ,
-							  ( 1, procedure   ) : "pr_importExcelData"    ,  ( 1, state       ) : "active"                ,
+							  ( 1, procedure   ) : "pr_readAll"            ,  ( 1, state       ) : "active"                ,
 							  ( 2, displaytext ) : "Export"                ,  ( 2, icon        ) : "aimms-database-export" ,
-							  ( 2, state       ) : "active"                ,  ( 3, displaytext ) : "Generate Random"       ,
-							  ( 3, icon        ) : "aimms-database-refresh",  ( 3, state       ) : "active"                ,
+							  ( 2, procedure   ) : "pr_writeAll"           ,  ( 2, state       ) : "active"                ,
+							  ( 3, displaytext ) : "Generate Random"       ,  ( 3, icon        ) : "aimms-database-refresh",
+							  ( 3, procedure   ) : "pr_randomizeData"      ,  ( 3, state       ) : "active"                ,
 							  ( 4, displaytext ) : "Solve"                 ,  ( 4, icon        ) : "aimms-cog"             ,
-							  ( 4, procedure   ) : "mainexecution"         ,  ( 4, state       ) : "active"                ,
-							  ( 5, displaytext ) : "Save New Case"             ,  ( 5, icon        ) : "aimms-floppy-disk"     ,
-							  ( 5, procedure   ) : "pr_openSaveCaseDialog" ,  ( 5, state       ) : "active"                 }
+							  ( 4, procedure   ) : "pr_runModel"           ,  ( 4, state       ) : "active"                ,
+							  ( 5, displaytext ) : "Case Manager"             ,  ( 5, icon        ) : "aimms-floppy-disk"     ,
+							  ( 5, procedure   ) : "pr_openCaseManagerDialog"                ,  ( 5, state       ) : "active"                 }
 						}
 					}
 				}
@@ -817,8 +818,8 @@ Model Main_EmployeeScheduling {
 					IndexDomain: (webui::indexPageExtension,webui::indexPageActionSpec);
 					Definition: {
 						data 
-						{ ( 1, displaytext ) : "Save New Case"            ,  ( 1, icon        ) : "aimms-floppy-disk"    ,
-						  ( 1, procedure   ) : "pr_openSaveCaseDialog",  ( 1, state       ) : "active"                }
+						{ ( 1, displaytext ) : "Case Manager"            ,  ( 1, icon        ) : "aimms-floppy-disk"       ,
+						  ( 1, procedure   ) : "pr_openCaseManagerDialog",  ( 1, state       ) : "active"                   }
 					}
 				}
 				StringParameter sp_resultsSidePanel {
@@ -852,8 +853,8 @@ Model Main_EmployeeScheduling {
 					IndexDomain: (webui::indexPageExtension,webui::indexPageActionSpec);
 					Definition: {
 						data 
-						{ ( 1, displaytext ) : "Save New Case"            ,  ( 1, icon        ) : "aimms-floppy-disk"    ,
-						  ( 1, procedure   ) : "pr_openSaveCaseDialog",  ( 1, state       ) : "active"                }
+						{ ( 1, displaytext ) : "Case Manager"            ,  ( 1, icon        ) : "aimms-floppy-disk"       ,
+						  ( 1, procedure   ) : "pr_openCaseManagerDialog",  ( 1, state       ) : "active"                   }
 					}
 				}
 				Parameter p_restaurantStartTime {
@@ -873,46 +874,126 @@ Model Main_EmployeeScheduling {
 					Definition: ep_selectedEmployee + " Schedule";
 				}
 			}
-			Section Save_Case_DialogPage {
+			Section Case_Manager_DialogPage {
 				StringParameter sp_caseName {
 					InitialData: "<insert case name>";
 				}
-				Procedure pr_saveCase {
-					Arguments: sp_in_caseName;
+				Procedure pr_uploadSavedScenario {
+					Arguments: (sp_in_fileLocation,StatusCode,StatusDescription);
 					Body: {
-						! Save the case in the folder "data".
-						if not DirectoryExists( "data" ) then
-						    DirectoryCreate("data");
-						endif ;
+						! https://documentation.aimms.com/webui/upload-widget.html#filelocation
+						sp_loc_fileLocation := webui::GetIOFilePath(sp_in_fileLocation);
 						
-						CaseFileSave( "data\\" + sp_in_caseName + ".data", AllIdentifiers );
+						! load the scenario
+						CaseFileLoad(sp_loc_fileLocation);
+						
+						! checking if the previous read statement was successful or not
+						if CurrentCase <> '' then
+						
+						   ! if successful, statusCode is set to 'OK' which will trigger the WebUI to show the message below in a grey box
+						   StatusCode := webui::ReturnStatusCode('OK');
+						
+						   ! displaying the status message, and logging it in the WebUI messages
+						   StatusDescription := "Case was loaded successfully.";
+						
+						else    !if previous read statement was not successful
+						
+						   ! setting the statusCode to 'ERROR'
+						   statusCode := webui::ReturnStatusCode('ERROR');
+						
+						   !displaying a custom error message
+						   statusDescription := "Could not read the case file.";
+						
+						endif;
+						
+						FileDelete(sp_loc_fileLocation);
 					}
-					StringParameter sp_in_caseName {
+					Comment: "More documentation about Upload Widget here: https://documentation.aimms.com/webui/upload-widget.html";
+					StringParameter sp_in_fileLocation {
 						Property: Input;
 					}
+					Parameter StatusCode {
+						Property: Output;
+						Comment: "this exact name is expected";
+					}
+					StringParameter StatusDescription {
+						Property: Output;
+						Comment: "this exact name is expected";
+					}
+					StringParameter sp_loc_fileLocation;
 				}
-				Procedure pr_openSaveCaseDialog {
+				Procedure pr_downloadCurrentScenario {
+					Arguments: (FileLocation,statusCode,statusDescription);
 					Body: {
-						s_loc_actions := {'Cancel', 'OK'};
+						! if the temp folder exists, deleate and create new
+						if DirectoryExists( "temp_data" ) then
+						    DirectoryDelete("temp_data");
+						endif;
+						DirectoryCreate("temp_data");
+						
+						if sp_caseName <> "" or sp_caseName <> "<insert case name>" then
+						    sp_loc_completeCaseName := sp_caseName + ".data";
+						    CaseFileSave("temp_data\\" + sp_loc_completeCaseName, AllIdentifiers);
+						
+						    ! from temp_data folder to Main Directory folder
+						    FileCopy("temp_data\\" + sp_loc_completeCaseName, sp_loc_completeCaseName);
+						    FileLocation :=  sp_loc_completeCaseName;
+						
+						    ! we store the location of the file in string parameter FinalLocation
+						    FinalLocation  := webui::GetIOFilePath(sp_loc_completeCaseName);
+						
+						    ! checking if the previous write statement was successful or not
+						    if FileExists(FinalLocation) then
+						
+						        ! if successful, statusCode is set to 'CREATED' which will trigger the download widget to show the Get button
+						        StatusCode := webui::ReturnStatusCode('CREATED');
+						        ! displaying the status message as All perfect instead of the default "File ready to download"
+						        StatusDescription := "All perfect!";
+						
+						    else    !if previous write statement was not successful
+						
+						        ! setting the statusCode to 'ERROR' and the download widget will not show the Get button anymore
+						        statusCode := webui::ReturnStatusCode('ERROR');
+						        !displaying a custom error message
+						        statusDescription := "Something went wrong when creating the file.";
+						
+						    endif;
+						
+						else 
+						
+						    ! setting the statusCode to 'ERROR' and the download widget will not show the Get button anymore
+						    statusCode := webui::ReturnStatusCode('ERROR');
+						    !displaying a custom error message
+						    statusDescription := "Please give the case a name.";
+						
+						endif;
+					}
+					Comment: "More documentation about Download Widget here: https://documentation.aimms.com/webui/download-widget.html";
+					StringParameter FileLocation {
+						Property: Output;
+					}
+					StringParameter FinalLocation;
+					StringParameter sp_loc_completeCaseName;
+					Parameter statusCode {
+						Property: Output;
+					}
+					StringParameter statusDescription {
+						Property: Output;
+					}
+					StringParameter sp_loc_fileLocation;
+					StringParameter sp_TextOfUploadedFile;
+				}
+				Procedure pr_openCaseManagerDialog {
+					Body: {
+						s_loc_actions := {'OK'};
 						
 						webui::OpenDialogPage(
 							pageId  :  'save_case', 
-							title   :  "Save New Case", 
+							title   :  "Case Manager", 
 							actions :  s_loc_actions, 
-							onDone  :  'pr_closingSaveCaseDialog');
+							onDone  :  'webui::NoOp1');
 					}
 					Set s_loc_actions;
-				}
-				Procedure pr_closingSaveCaseDialog {
-					Arguments: (sp_in_action);
-					Body: {
-						if sp_in_action = "OK" then
-						    pr_saveCase(sp_in_caseName :  sp_caseName);
-						endif;
-					}
-					StringParameter sp_in_action {
-						Property: Input;
-					}
 				}
 			}
 		}
