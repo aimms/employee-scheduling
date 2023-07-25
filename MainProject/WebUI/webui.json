@@ -18,12 +18,18 @@
         ]
       }
     },
+    "data.manager.hidden": {
+      "literal": true
+    },
     "ignoredst": {
       "aimms": {
         "contents": [
           "webui::IgnoreDST"
         ]
       }
+    },
+    "menu.hidden": {
+      "literal": true
     },
     "pages": {
       "literal": {
@@ -1356,6 +1362,14 @@
     "aimms.widget.type": {
       "literal": "label"
     },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "sp_def_uploadLabel"
+        ],
+        "slices": []
+      }
+    },
     "name": {
       "literal": "lbl_uploadLabel"
     }
@@ -1363,6 +1377,14 @@
   "widgets/lbl_uploadLabel_1": {
     "aimms.widget.type": {
       "literal": "label"
+    },
+    "contents": {
+      "aimms": {
+        "contents": [
+          "sp_def_downloadLabel"
+        ],
+        "slices": []
+      }
     },
     "name": {
       "literal": "lbl_uploadLabel (1)"

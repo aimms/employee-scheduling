@@ -878,6 +878,12 @@ Model Main_EmployeeScheduling {
 				StringParameter sp_caseName {
 					InitialData: "<insert case name>";
 				}
+				StringParameter sp_def_uploadLabel {
+					Definition: "Load Scenario As Active";
+				}
+				StringParameter sp_def_downloadLabel {
+					Definition: "Save Scenario As";
+				}
 				Procedure pr_uploadSavedScenario {
 					Arguments: (sp_in_fileLocation,StatusCode,StatusDescription);
 					Body: {
@@ -886,6 +892,7 @@ Model Main_EmployeeScheduling {
 						
 						! load the scenario
 						CaseFileLoad(sp_loc_fileLocation);
+						CaseFileSetCurrent(sp_loc_fileLocation);
 						
 						! checking if the previous read statement was successful or not
 						if CurrentCase <> '' then

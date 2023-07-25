@@ -12,7 +12,7 @@
   --color_bg_workflow_current: var(--primaryDark); /*bg color when step is selected*/
   --color_workflow_active: var(--primaryDark); /*font and icon color when step is active*/
 
-  --color_bg_app-canvas: rgb(249, 249, 249); /*background color*/
+  --color_bg_app-canvas: url(/app-resources/resources/images/RightBackground.png) rgb(249, 249, 249) no-repeat left/contain; /*background color*/
   --color_bg_widget-header: linear-gradient(180deg, rgba(255,255,255,1) 20%, var(--primary) 100%); /*widget header background color*/
   --border_widget-header: 2px solid var(--primaryDark); /*line color after widget header*/
 
