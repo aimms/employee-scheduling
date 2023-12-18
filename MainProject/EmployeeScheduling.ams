@@ -1268,6 +1268,16 @@ Model Main_EmployeeScheduling {
 			}
 		}
 	}
+	Section Unit_Test {
+		Procedure pr_loadUnitTestData {
+			Body: {
+				empty Main_EmployeeScheduling;
+				
+				
+				CaseFileLoad("unit-test/unit-test.data");
+			}
+		}
+	}
 	Section Application_initialization_and_termination {
 		Procedure MainInitialization;
 		Procedure PostMainInitialization {

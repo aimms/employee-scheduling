@@ -8,3 +8,9 @@
   font-weight: bold;
   color: var(--color_text_default);
 }
+
+.tag-table .cell.flag-number input,
+.tag-table .cell.flag-string input{
+  text-align: center;
+}
+
