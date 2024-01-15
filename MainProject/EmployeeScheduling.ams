@@ -331,6 +331,15 @@ Model Main_EmployeeScheduling {
 			}
 			Procedure pr_runModel {
 				Body: {
+					if pro::GetPROEndPoint() or not ProjectDeveloperMode() then
+					    if pro::DelegateToServer( 
+					        waitForCompletion  :  1,
+					        completionCallback :  'pro::session::LoadResultsCallBack' )
+					    then 
+					        return 1;
+					    endif;
+					endif;
+					
 					solve mp_minimizeCost;
 					
 					pr_modelInformation;
@@ -1011,11 +1020,11 @@ Model Main_EmployeeScheduling {
 		}
 	}
 	Section Database_Connection {
-		StringParameter sp_connectionString {
+		StringParameter sp_def_connectionString {
 			Definition: {
 				SQLCreateConnectionString (
 					DatabaseInterface              :  'odbc',
-					DriverName                     :  "SQLite3 ODBC Driver",
+					DriverName                     :  sp_def_driverName,
 					ServerName                     :  "", 
 					DatabaseName                   :  "inputs.db", !The path of your database
 					UserId                         :  "", 
@@ -1023,79 +1032,74 @@ Model Main_EmployeeScheduling {
 					AdditionalConnectionParameters :  "") ;
 			}
 		}
-		Procedure pr_readAll {
-			Body: {
-				!check if driver exists
-				p_loc_numberOfDrivers := SQLNumberOfDrivers('ODBC');
-				
-				while LoopCount <= p_loc_numberOfDrivers do
-				    sp_loc_driverName := SQLDriverName('ODBC', LoopCount);
-				
-				    if sp_loc_driverName = "SQLite3 ODBC Driver" then
-				        pr_readSkillDB;
-				        pr_readShiftDB;
-				        pr_readEmployeeDB;
-				        pr_readRestaurantDB;
-				        pr_readEmployeeShiftsDB;
-				        pr_readEmployeeSkillDB;
-				        pr_readDemandDB;
-				        break;
-				    endif;                
-				endwhile;
-				
-				s_loc_actions := {'Cancel'};
-				
-				if sp_loc_driverName <> "SQLite3 ODBC Driver" then
-				    webui::RequestPerformWebUIDialog(
-				            title   :  "Minimal Requirements", 
-				            message :  "Please install 'SQLite3 ODBC Driver' and try again.", 
-				            actions :  s_loc_actions, 
-				            onDone  :  'webui::NoOp1');
-				
+		StringParameter sp_def_driverName {
+			Definition: {
+				if pro::GetPROEndPoint() or not ProjectDeveloperMode() then
+				    "SQLite3"
+				else 
+				    "SQLite3 ODBC Driver"    
 				endif;
 			}
-			Parameter p_loc_numberOfDrivers;
+		}
+		Procedure pr_readAll {
+			Body: {
+				!check if connection holds
+				p_loc_testConnection := TestDataSource(sp_def_connectionString);
+				
+				if p_loc_testConnection then
+				    pr_readSkillDB;
+				    pr_readShiftDB;
+				    pr_readEmployeeDB;
+				    pr_readRestaurantDB;
+				    pr_readEmployeeShiftsDB;
+				    pr_readEmployeeSkillDB;
+				    pr_readDemandDB;
+				
+				else    
+				    s_loc_actions := {'Cancel'};
+				
+				    webui::RequestPerformWebUIDialog(
+				                title   :  "Minimal Requirements", 
+				                message :  "Please install 'SQLite3 ODBC Driver' and try again.", 
+				                actions :  s_loc_actions, 
+				                onDone  :  'webui::NoOp1');
+				endif;
+			}
+			Parameter p_loc_testConnection;
 			StringParameter sp_loc_driverName;
 			Set s_loc_actions;
 		}
 		Procedure pr_writeAll {
 			Body: {
-				!check if driver exists
-				p_loc_numberOfDrivers := SQLNumberOfDrivers('ODBC');
+				!check if connection holds
+				p_loc_testConnection := TestDataSource(sp_def_connectionString);
 				
-				while LoopCount <= p_loc_numberOfDrivers do
-				    sp_loc_driverName := SQLDriverName('ODBC', LoopCount);
+				if p_loc_testConnection then
+				    pr_writeSkillDB;
+				    pr_writeShiftDB;
+				    pr_writeEmployeeDB;
+				    pr_writeRestaurantDB;
+				    pr_writeEmployeeShiftsDB;
+				    pr_writeEmployeeSkillDB;
+				    pr_writeDemandDB;
 				
-				    if sp_loc_driverName = "SQLite3 ODBC Driver" then
-				        pr_writeSkillDB;
-				        pr_writeShiftDB;
-				        pr_writeEmployeeDB;
-				        pr_writeRestaurantDB;
-				        pr_writeEmployeeShiftsDB;
-				        pr_writeEmployeeSkillDB;
-				        pr_writeDemandDB;
-				        break;
-				    endif;                
-				endwhile;
+				else 
+				    s_loc_actions := {'Cancel'};
 				
-				s_loc_actions := {'Cancel'};
-				
-				if sp_loc_driverName <> "SQLite3 ODBC Driver" then
 				    webui::RequestPerformWebUIDialog(
 				            title   :  "Minimal Requirements", 
 				            message :  "Please install 'SQLite3 ODBC Driver' and try again.", 
 				            actions :  s_loc_actions, 
 				            onDone  :  'webui::NoOp1');
-				
 				endif;
 			}
-			Parameter p_loc_numberOfDrivers;
+			Parameter p_loc_testConnection;
 			StringParameter sp_loc_driverName;
 			Set s_loc_actions;
 		}
 		Section DB_Skills {
 			DatabaseTable db_readSkills {
-				DataSource: sp_connectionString;
+				DataSource: sp_def_connectionString;
 				TableName: "skill";
 				Mapping: {
 					"id"     -->i_sk,
@@ -1118,7 +1122,7 @@ Model Main_EmployeeScheduling {
 		}
 		Section DB_Shifts {
 			DatabaseTable db_readShifts {
-				DataSource: sp_connectionString;
+				DataSource: sp_def_connectionString;
 				TableName: "shift";
 				Mapping: {
 					"id"         -->i_sh,
@@ -1144,7 +1148,7 @@ Model Main_EmployeeScheduling {
 		}
 		Section DB_Employee {
 			DatabaseTable db_readEmployees {
-				DataSource: sp_connectionString;
+				DataSource: sp_def_connectionString;
 				TableName: "employee";
 				Mapping: {
 					"id"          -->i_empl,
@@ -1169,7 +1173,7 @@ Model Main_EmployeeScheduling {
 		}
 		Section DB_Restaurant {
 			DatabaseTable db_readRestaurants {
-				DataSource: sp_connectionString;
+				DataSource: sp_def_connectionString;
 				TableName: "restaurant";
 				Mapping: {
 					"id"          -->i_rest,
@@ -1194,7 +1198,7 @@ Model Main_EmployeeScheduling {
 		}
 		Section DB_Employee_Shift {
 			DatabaseTable db_readEmployeeShifts {
-				DataSource: sp_connectionString;
+				DataSource: sp_def_connectionString;
 				TableName: "employee_shift";
 				Mapping: {
 					"employee_id" -->i_empl,
@@ -1218,7 +1222,7 @@ Model Main_EmployeeScheduling {
 		}
 		Section DB_Employee_Skill {
 			DatabaseTable db_readEmployeeSkills {
-				DataSource: sp_connectionString;
+				DataSource: sp_def_connectionString;
 				TableName: "employee_skill";
 				Mapping: {
 					"employee_id"      -->i_empl,
@@ -1244,7 +1248,7 @@ Model Main_EmployeeScheduling {
 		}
 		Section DB_Demand {
 			DatabaseTable db_readDemands {
-				DataSource: sp_connectionString;
+				DataSource: sp_def_connectionString;
 				TableName: "demand";
 				Mapping: {
 					"restaurant_id" -->i_rest,

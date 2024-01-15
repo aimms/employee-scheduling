@@ -19,7 +19,10 @@
       }
     },
     "data.manager.hidden": {
-      "literal": true
+      "literal": false
+    },
+    "defaults.upload.download.controls.show": {
+      "literal": false
     },
     "ignoredst": {
       "aimms": {
@@ -1597,7 +1600,8 @@
     "contents.displaydomain": {
       "literal": {
         "sp_restaurantdescription": "1",
-        "p_activerestaurant": "1"
+        "p_activerestaurant": "1",
+        "ep_": "1"
       }
     },
     "contents.partition": {
@@ -1650,16 +1654,23 @@
         {
           "type": "colHeader",
           "colKey": {
-            "<IDENTIFIER-SET>": "p_activeRestaurant"
+            "<IDENTIFIER-SET>": "ep_"
           },
-          "width": 11.91
+          "width": 412.62
         },
         {
           "type": "colHeader",
           "colKey": {
             "<IDENTIFIER-SET>": "sp_restaurantDescription"
           },
-          "width": 32.98
+          "width": 44.77
+        },
+        {
+          "type": "colHeader",
+          "colKey": {
+            "<IDENTIFIER-SET>": "p_activeRestaurant"
+          },
+          "width": 11.15
         }
       ]
     },
@@ -2016,6 +2027,9 @@
         "slices": []
       }
     },
+    "contents.numdecimals": {
+      "literal": 0
+    },
     "contents.partition": {
       "literal": {
         "rowHeader": [
@@ -2056,7 +2070,7 @@
           "colKey": {
             "i_rest": "Black Bull Steak Restaurant"
           },
-          "width": 12.15
+          "width": 16.71
         }
       ]
     },
