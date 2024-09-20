@@ -1277,7 +1277,6 @@ Model Main_EmployeeScheduling {
 			Body: {
 				empty Main_EmployeeScheduling;
 				
-				
 				CaseFileLoad("unit-test/unit-test.data");
 			}
 		}
