@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<ExportSettings>
+	<ExcludedFile>log</ExcludedFile>
+	<ExcludedFile>PROTemp</ExcludedFile>
+</ExportSettings>
