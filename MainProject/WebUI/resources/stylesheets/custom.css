@@ -16,3 +16,6 @@
   text-align: center;
 }
 
+input.boolean-cell-editor-contents {
+  accent-color: var(--primaryDark) /*boolean color*/
+}

@@ -113,12 +113,6 @@
                 "type": "pagev2-grid",
                 "slug": "gantt",
                 "children": []
-              },
-              {
-                "name": "Save Case",
-                "type": "pagev2-grid-dialog",
-                "slug": "save_case",
-                "children": []
               }
             ]
           }
@@ -347,11 +341,11 @@
     "secondarypageactions": {
       "aimms": {
         "contents": [
-          "sp_ganttSecondaryActions"
+          "sp_mySecondaryActions"
         ],
         "slices": [
           {
-            "identifier": "sp_ganttSecondaryActions",
+            "identifier": "sp_mySecondaryActions",
             "slice": [
               {
                 "index": "webui::indexPageExtension",
@@ -473,11 +467,11 @@
     "secondarypageactions": {
       "aimms": {
         "contents": [
-          "sp_masterSecondaryActions"
+          "sp_mySecondaryActions"
         ],
         "slices": [
           {
-            "identifier": "sp_masterSecondaryActions",
+            "identifier": "sp_mySecondaryActions",
             "slice": [
               {
                 "index": "webui::indexPageExtension",
@@ -585,11 +579,11 @@
     "secondarypageactions": {
       "aimms": {
         "contents": [
-          "sp_resultsSecondaryActions"
+          "sp_mySecondaryActions"
         ],
         "slices": [
           {
-            "identifier": "sp_resultsSecondaryActions",
+            "identifier": "sp_mySecondaryActions",
             "slice": [
               {
                 "index": "webui::indexPageExtension",
@@ -656,88 +650,6 @@
       ]
     }
   },
-  "pages/save_case": {
-    "aimms.widget.type": {
-      "literal": "pagev2-grid-dialog"
-    },
-    "bindings": {
-      "literal": [
-        {
-          "widgetUri": "lbl_uploadLabel",
-          "gridArea": "area-a",
-          "dndId": "area-albl_uploadLabel0"
-        },
-        {
-          "widgetUri": "upl_loadNewCase",
-          "gridArea": "area-a",
-          "dndId": "area-aupl_loadNewCase1"
-        },
-        {
-          "widgetUri": "lbl_uploadLabel_1",
-          "gridArea": "area-a",
-          "dndId": "area-albl_uploadLabel_12"
-        },
-        {
-          "widgetUri": "scl_caseName",
-          "gridArea": "area-a",
-          "dndId": "area-ascl_caseName3"
-        },
-        {
-          "widgetUri": "dwn_downloadCase",
-          "gridArea": "area-a",
-          "dndId": "Unassigned widgetsdwn_downloadCase"
-        }
-      ]
-    },
-    "layoutId": {
-      "literal": "Layout11"
-    },
-    "maxcolumns": {
-      "literal": 1
-    },
-    "maxrows": {
-      "literal": 1
-    },
-    "widgets": {
-      "literal": [
-        {
-          "uri": "scl_caseName",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "upl_loadNewCase",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "lbl_uploadLabel",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "lbl_uploadLabel_1",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        },
-        {
-          "uri": "dwn_downloadCase",
-          "layoutInfo": {
-            "width": "2",
-            "height": "1"
-          }
-        }
-      ]
-    }
-  },
   "pages/story": {
     "aimms.widget.type": {
       "literal": "pagev2-grid"
@@ -792,11 +704,11 @@
     "secondarypageactions": {
       "aimms": {
         "contents": [
-          "sp_transactionalSecondaryActions"
+          "sp_mySecondaryActions"
         ],
         "slices": [
           {
-            "identifier": "sp_transactionalSecondaryActions",
+            "identifier": "sp_mySecondaryActions",
             "slice": [
               {
                 "index": "webui::indexPageExtension",
@@ -1024,20 +936,6 @@
         ],
         "slices": []
       }
-    }
-  },
-  "widgets/dwn_downloadCase": {
-    "action": {
-      "literal": {
-        "type": "procedure",
-        "value": "pr_downloadCurrentScenario"
-      }
-    },
-    "aimms.widget.type": {
-      "literal": "download"
-    },
-    "name": {
-      "literal": "dwn_downloadCase"
     }
   },
   "widgets/gnt_assignementPerRestaurant": {
@@ -1380,59 +1278,6 @@
     },
     "name": {
       "literal": "img_homeLogo"
-    }
-  },
-  "widgets/lbl_uploadLabel": {
-    "aimms.widget.type": {
-      "literal": "label"
-    },
-    "contents": {
-      "aimms": {
-        "contents": [
-          "sp_def_uploadLabel"
-        ],
-        "slices": []
-      }
-    },
-    "name": {
-      "literal": "lbl_uploadLabel"
-    }
-  },
-  "widgets/lbl_uploadLabel_1": {
-    "aimms.widget.type": {
-      "literal": "label"
-    },
-    "contents": {
-      "aimms": {
-        "contents": [
-          "sp_def_downloadLabel"
-        ],
-        "slices": []
-      }
-    },
-    "name": {
-      "literal": "lbl_uploadLabel (1)"
-    }
-  },
-  "widgets/scl_caseName": {
-    "aimms.widget.type": {
-      "literal": "scalar"
-    },
-    "compact": {
-      "literal": 1
-    },
-    "contents": {
-      "aimms": {
-        "contents": [
-          "sp_caseName"
-        ]
-      }
-    },
-    "name": {
-      "literal": "scl_caseName"
-    },
-    "title": {
-      "literal": ""
     }
   },
   "widgets/scl_modelInformation": {
@@ -2408,20 +2253,6 @@
     },
     "name": {
       "literal": "txt_welcome"
-    }
-  },
-  "widgets/upl_loadNewCase": {
-    "action": {
-      "literal": {
-        "type": "procedure",
-        "value": "pr_uploadSavedScenario"
-      }
-    },
-    "aimms.widget.type": {
-      "literal": "upload"
-    },
-    "name": {
-      "literal": "upl_loadNewCase"
     }
   }
 }
