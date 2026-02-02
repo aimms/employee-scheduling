@@ -21,7 +21,7 @@ To get the most out of this model, we highly recommend reading our detailed step
 👉 **[Read the Full Article: Employee Scheduling Guide](https://how-to.aimms.com/Articles/387/387-employee-scheduling.html)**
 
 ### Prerequisites
-- **AIMMS:** You will need AIMMS installed to run the model. [Download the Free Academic Edition here](https://www.aimms.com/english/developers/downloads/free-academic-license/) if you are a student.
+- **AIMMS:** You will need AIMMS installed to run the model. [Download the Free Academic Edition here](https://www.aimms.com/support/licensing/) if you are a student.
 - **SQLite ODBC Driver:** This project uses a database for data persistence. Ensure you have the [SQLite ODBC Driver installed](https://how-to.aimms.com/Articles/118/118-Connect-SQLite.html).
 - **WebUI:** This model is optimized for the AIMMS WebUI, featuring editable Gantt Charts and data-dependent CSS styling.
 
