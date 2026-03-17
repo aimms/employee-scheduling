@@ -6,6 +6,7 @@ Model Main_EmployeeScheduling {
 		Employee assignment problem, scheduling."
 	}
 	Section Data_Model {
+		Comment: "Data model for the employee scheduling application";
 		Section Quantities_and_Units {
 			Comment: {
 				"This section contains all the units and quantities that are added automatically by AIMMS.
@@ -29,8 +30,11 @@ Model Main_EmployeeScheduling {
 			}
 		}
 		Section Inputs {
+			Comment: "Input data for the employee scheduling application";
 			Section Calendars {
+				Comment: "Calendars for the employee scheduling application";
 				Calendar c_days {
+					Comment: "Calendar of days";
 					Index: i_day;
 					Unit: day;
 					BeginDate: sp_todayDate;
@@ -58,11 +62,14 @@ Model Main_EmployeeScheduling {
 				}
 			}
 			Section Shifts {
+				Comment: "Shifts definitions and properties";
 				Set s_shifts {
+					Comment: "Set of all available shifts";
 					Index: i_sh;
 					Parameter: ep_selectedShift;
 				}
 				Set s_activeShifts {
+					Comment: "Subset of active shifts";
 					SubsetOf: s_shifts;
 					Index: i_act_sh;
 					Definition: {
@@ -70,24 +77,30 @@ Model Main_EmployeeScheduling {
 					}
 				}
 				Parameter p_activeShift {
+					Comment: "Indicator if a shift is active";
 					IndexDomain: i_sh;
 					Range: binary;
 				}
 				Parameter p_startTime {
+					Comment: "Start time of a shift";
 					IndexDomain: (i_sh);
 					InitialData: 0;
 				}
 				Parameter p_duration {
+					Comment: "Duration of a shift";
 					IndexDomain: (i_sh);
 					InitialData: 0;
 				}
 			}
 			Section Skills {
+				Comment: "Skills definitions and properties";
 				Set s_skills {
+					Comment: "Set of all available skills";
 					Index: i_sk;
 					Parameter: ep_selectedSkill;
 				}
 				Set s_activeSkills {
+					Comment: "Subset of active skills";
 					SubsetOf: s_skills;
 					Index: i_act_sk;
 					Definition: {
@@ -95,17 +108,21 @@ Model Main_EmployeeScheduling {
 					}
 				}
 				Parameter p_activeSkill {
+					Comment: "Indicator if a skill is active";
 					IndexDomain: i_sk;
 					Range: binary;
 				}
 			}
 			Section Restaurants {
+				Comment: "Restaurants definitions and properties";
 				Set s_restaurants {
+					Comment: "Set of all available restaurants";
 					Index: i_rest;
 					Parameter: ep_selectedRestaurant;
 					OrderBy: i_rest;
 				}
 				Set s_activeRestaurants {
+					Comment: "Subset of active restaurants";
 					SubsetOf: s_restaurants;
 					Index: i_act_rest;
 					Definition: {
@@ -113,27 +130,34 @@ Model Main_EmployeeScheduling {
 					}
 				}
 				Parameter p_activeRestaurant {
+					Comment: "Indicator if a restaurant is active";
 					IndexDomain: i_rest;
 					Range: binary;
 				}
 				StringParameter sp_restaurantDescription {
+					Comment: "Description of the restaurant";
 					IndexDomain: i_rest;
 				}
 				DeclarationSection Demand {
+					Comment: "Demand for skills in restaurants by shift";
 					Parameter p_demand {
 						IndexDomain: (i_rest,i_sh,i_sk);
 						Text: "The needed number of skilled employees in the restaurants";
+						Comment: "The needed number of skilled employees in the restaurants";
 						Range: integer;
 						InitialData: 0;
 					}
 				}
 			}
 			Section Employees {
+				Comment: "Employees definitions and properties";
 				Set s_employees {
+					Comment: "Set of all available employees";
 					Index: i_empl;
 					Parameter: ep_selectedEmployee;
 				}
 				Set s_activeEmployees {
+					Comment: "Subset of active employees";
 					SubsetOf: s_employees;
 					Index: i_act_empl;
 					Definition: {
@@ -141,55 +165,69 @@ Model Main_EmployeeScheduling {
 					}
 				}
 				Parameter p_activeEmployee {
+					Comment: "Indicator if an employee is active";
 					IndexDomain: i_empl;
 					Range: binary;
 				}
 				StringParameter sp_employeeDescription {
+					Comment: "Description of the employee";
 					IndexDomain: i_empl;
 				}
 				DeclarationSection Employee_Shift {
+					Comment: "Employee shift availability";
 					Parameter p_employeeDoesShift {
 						IndexDomain: (i_empl,i_sh);
 						Text: "Employees\' availability for shifts";
+						Comment: "Employees\' availability for shifts";
 						Range: binary;
 					}
 				}
 				DeclarationSection Employee_Skill {
+					Comment: "Employee skills and preferences";
 					Parameter p_employeeSkillPreference {
 						IndexDomain: (i_empl,i_sk) | p_employeeHasSkill(i_empl,i_sk);
 						Text: "Job preferences of the employees (lower number means preferred position)";
+						Comment: "Job preferences of the employees (lower number means preferred position)";
 					}
 					Parameter p_employeeHasSkill {
 						IndexDomain: (i_empl,i_sk);
 						Text: "Employees\' skills";
+						Comment: "Employees\' skills";
 						Range: binary;
 					}
 				}
 			}
 			Procedure pr_randomizeData {
+				Comment: "Randomize data for testing purposes";
 				Body: {
+					! Check if there is enough active data to randomize
 					if card(s_activeShifts) + card(s_activeSkills) + card(s_activeRestaurants) + card(s_activeEmployees) > 0 then
+					    ! Randomize demand
 					    p_demand(i_rest,i_sh,i_sk) | 
 					            (p_activeShift(i_sh)
 					            and p_activeSkill(i_sk)
 					            and p_activeRestaurant(i_rest))
 					    :=  round(Uniform(0,4));
 					
+					    ! Randomize employee shift availability
 					    p_employeeDoesShift(i_empl,i_sh) | 
 					            (p_activeShift(i_sh)
 					            and p_activeEmployee(i_empl))
 					    := round(uniform(0,1)/3*4);
 					
+					    ! Randomize employee skills
 					    p_employeeHasSkill(i_empl,i_sk) | 
 					            (p_activeSkill(i_sk)
 					            and p_activeEmployee(i_empl))
 					    := round(uniform(0,1)/3*4);
 					
+					    ! Randomize employee skill preferences
 					    p_employeeSkillPreference(i_empl,i_sk)  | 
 					            (p_activeSkill(i_sk)
 					            and p_activeEmployee(i_empl))
 					    :=  round(uniform(0.5,3.49));
 					else
+					    ! Display warning dialog if not enough data
 					    webui::RequestPerformWebUIDialog(
 					        title   :  "Not Enough", 
 					        message :  "Not enough data inputed. Please check.", 
@@ -198,6 +236,7 @@ Model Main_EmployeeScheduling {
 					endif;
 				}
 				Set s_loc_actions {
+					Comment: "Local actions set";
 					InitialData: {
 						{'OK'}
 					}
@@ -205,20 +244,24 @@ Model Main_EmployeeScheduling {
 			}
 		}
 		Section Math_Model {
+			Comment: "Mathematical model to optimize employee scheduling";
 			Variable v_assignment {
 				IndexDomain: (i_rest,i_empl,i_sh,i_sk);
 				Text: "Employees\' work schedule";
+				Comment: "Employees\' work schedule";
 				Range: binary;
 			}
 			Variable v_unfulfilled {
 				IndexDomain: (i_rest,i_sh,i_sk);
 				Text: "Unfulfilled positions";
+				Comment: "Unfulfilled positions";
 				Range: nonnegative;
 				webui::AnnotationsIdentifier: sp_unfulfilledDemandAnnotation;
 			}
 			Constraint c_satisfyDemand {
 				IndexDomain: (i_rest,i_sh,i_sk);
 				Text: "The number of assigned employees has to be equal to the needed number of employees minus the unfulfilled positions";
+				Comment: "The number of assigned employees has to be equal to the needed number of employees minus the unfulfilled positions";
 				Definition: {
 					sum(i_empl, v_assignment(i_rest,i_empl,i_sh,i_sk)) 
 					= 
@@ -230,6 +273,7 @@ Model Main_EmployeeScheduling {
 			Constraint c_assignmentSatisfiesShift {
 				IndexDomain: (i_empl,i_sh);
 				Text: "If the employee is available for a shift, then he or she can be assigned, else not";
+				Comment: "If the employee is available for a shift, then he or she can be assigned, else not";
 				Definition: {
 					sum((i_rest,i_sk), v_assignment(i_rest,i_empl,i_sh,i_sk)) 
 					<= 
@@ -239,6 +283,7 @@ Model Main_EmployeeScheduling {
 			Constraint c_assignmentSatisfiesSkills {
 				IndexDomain: (i_rest,i_empl,i_sh,i_sk);
 				Text: "If the employee has the needed skill for a postion, he or she can be assigned, else not";
+				Comment: "If the employee has the needed skill for a postion, he or she can be assigned, else not";
 				Definition: {
 					v_assignment(i_rest,i_empl,i_sh,i_sk) 
 					<= 
@@ -248,6 +293,7 @@ Model Main_EmployeeScheduling {
 			Constraint c_maximumOfOneShift {
 				IndexDomain: (i_empl);
 				Text: "An employee cannot do more then one shift";
+				Comment: "An employee cannot do more then one shift";
 				Definition: {
 					sum((i_rest,i_sh,i_sk),v_assignment(i_rest,i_empl,i_sh,i_sk)) 
 					<= 
@@ -256,10 +302,12 @@ Model Main_EmployeeScheduling {
 			}
 			Parameter p_unfulfilledWeightingFactor {
 				Text: "The cost factor of an unfulfilled postion";
+				Comment: "The cost factor of an unfulfilled postion";
 				InitialData: 1000;
 			}
 			Variable v_unfulfilledCost {
 				Text: "The total cost caused by unfulfilled postions";
+				Comment: "The total cost caused by unfulfilled postions";
 				Definition: {
 					sum((i_rest,i_sh,i_sk), 
 					    v_unfulfilled(i_rest,i_sh,i_sk) 
@@ -268,6 +316,7 @@ Model Main_EmployeeScheduling {
 			}
 			Variable v_notPreferenceCost {
 				Text: "The total cost caused by assigning employees for less preferred postions";
+				Comment: "The total cost caused by assigning employees for less preferred postions";
 				Definition: {
 					sum((i_rest,i_empl,i_sh,i_sk), 
 					    v_assignment(i_rest,i_empl,i_sh,i_sk) 
@@ -276,17 +325,21 @@ Model Main_EmployeeScheduling {
 			}
 			Variable v_totalCost {
 				Text: "The total cost of the schedule";
+				Comment: "The total cost of the schedule";
 				Definition: v_unfulfilledCost + v_notPreferenceCost;
 			}
 			Set s_employeeAssignmentConstraints {
+				Comment: "Set of constraints for employee assignment";
 				SubsetOf: AllConstraints;
 				Definition: AllConstraints * Math_Model;
 			}
 			Set s_employeeAssignmentVariables {
+				Comment: "Set of variables for employee assignment";
 				SubsetOf: AllVariables;
 				Definition: AllVariables * Math_Model;
 			}
 			MathematicalProgram mp_minimizeCost {
+				Comment: "Mathematical program to minimize total cost";
 				Objective: v_totalCost;
 				Direction: minimize;
 				Constraints: s_employeeAssignmentConstraints;
@@ -294,24 +347,30 @@ Model Main_EmployeeScheduling {
 				Type: Automatic;
 			}
 			DeclarationSection Model_Information {
+				Comment: "Information regarding the mathematical model solution status";
 				ElementParameter ep_programStatus {
+					Comment: "Status of the mathematical program";
 					Range: AllSolutionStates;
 					Property: NoSave;
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Parameter p_gap {
+					Comment: "Optimality gap of the solution";
 					Property: NoSave;
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Parameter p_numberOfConstraints {
+					Comment: "Number of constraints in the model";
 					Property: NoSave;
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Parameter p_numberOfVariables {
+					Comment: "Number of variables in the model";
 					Property: NoSave;
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Parameter p_solutionTime {
+					Comment: "Time taken to solve the model";
 					Unit: s;
 					Property: NoSave;
 					InitialData: 0;
@@ -319,9 +378,12 @@ Model Main_EmployeeScheduling {
 				}
 			}
 			Procedure pr_modelInformation {
+				Comment: "Update model information parameters";
 				Body: {
+					! Clear previous model information
 					empty Model_Information;
 					
+					! Retrieve solution properties and assign to parameters
 					ep_programStatus := mp_minimizeCost.ProgramStatus;
 					p_gap := abs(1 - (mp_minimizeCost.Objective /$ mp_minimizeCost.BestBound));
 					p_solutionTime := mp_minimizeCost.SolutionTime;
@@ -330,7 +392,9 @@ Model Main_EmployeeScheduling {
 				}
 			}
 			Procedure pr_runModel {
+				Comment: "Run the math model and manage the UI dialogs based on solution status";
 				Body: {
+					! Delegate execution to PRO server if available and not in developer mode
 					if pro::GetPROEndPoint() or not ProjectDeveloperMode() then
 					    if pro::DelegateToServer( 
 					        waitForCompletion  :  1,
@@ -340,10 +404,13 @@ Model Main_EmployeeScheduling {
 					    endif;
 					endif;
 					
+					! Solve the model
 					solve mp_minimizeCost;
 					
+					! Update model information
 					pr_modelInformation;
 					
+					! Check solution status and redirect
 					if ep_programStatus = 'Optimal' then
 					    webui::RequestPerformWebUIDialog(
 					        title   :  "Solve Completed", 
@@ -359,38 +426,51 @@ Model Main_EmployeeScheduling {
 					endif;
 				}
 				Set s_loc_actions {
+					Comment: "Local actions set for UI dialog";
 					InitialData: {
 						{'Ok'}
 					}
 				}
 			}
 			Procedure pr_openRedirectPage {
+				Comment: "Redirect user to the results page";
 				Arguments: (sp_loc_action);
 				Body: {
+					! Open the results page in WebUI
 					webui::OpenPage(pageId :  'results');
 				}
 				StringParameter sp_loc_action {
+					Comment: "Local action argument";
 					Property: Input;
 				}
 			}
 		}
 		Section Outputs {
+			Comment: "Model outputs and results";
 			Parameter p_assignment {
+				Comment: "Assignment results from the model";
 				IndexDomain: (i_rest, i_empl, i_sh, i_sk);
 				Definition: v_assignment(i_rest, i_empl, i_sh, i_sk);
 			}
 		}
 	}
 	Section UI_Declarations {
-		Procedure pr_empty;
+		Comment: "Declarations specifically used for the User Interface";
+		Procedure pr_empty {
+			Comment: "Empty procedure used as a placeholder";
+		}
 		Section System {
+			Comment: "System-wide UI configurations and states";
 			StringParameter sp_logo {
+				Comment: "Logo image for the application";
 				Definition: "aimms_logo.png";
 			}
 			StringParameter sp_myWorkflows {
+				Comment: "Workflow definitions for WebUI";
 				IndexDomain: (webui::indexWorkflowOrder,webui::indexWorkflowSpec);
 			}
 			StringParameter sp_myWorkflowSteps {
+				Comment: "Workflow step definitions mapping pages and icons";
 				IndexDomain: (webui::indexWorkflowOrder,webui::indexNoOfPages,webui::indexWorkflowPageSpec);
 				Definition: {
 					data 
@@ -418,6 +498,7 @@ Model Main_EmployeeScheduling {
 				}
 			}
 			StringParameter sp_mySecondaryActions {
+				Comment: "Secondary actions mapping for top application bar";
 				IndexDomain: (webui::indexPageExtension,webui::indexPageActionSpec);
 				Definition: {
 					data 
@@ -437,11 +518,14 @@ Model Main_EmployeeScheduling {
 			}
 		}
 		Section CRUD {
+			Comment: "Create, Read, Update, Delete sections for data entities";
 			StringParameter sp_addEditElement {
+				Comment: "String representing element to add or edit";
 				InitialData: "";
 				webui::AnnotationsIdentifier: sp_annotationCRUD;
 			}
 			StringParameter sp_annotationCRUD {
+				Comment: "Annotation for determining valid element additions";
 				Definition: {
 					if sp_addEditElement then 
 					    "green-input"
@@ -451,10 +535,14 @@ Model Main_EmployeeScheduling {
 				}
 			}
 			Section CRUD_Restaurant {
+				Comment: "CRUD operations for Restaurant entity";
 				Procedure pr_openAddRestaurant {
+					Comment: "Open the dialog to add a restaurant";
 					Body: {
+						! Empty the add/edit element parameter
 						empty sp_addEditElement;
 						
+						! Open WebUI dialog
 						webui::OpenDialogPage(
 							pageId  :  'crud', 
 							title   :  "Add Restaurant", 
@@ -462,26 +550,33 @@ Model Main_EmployeeScheduling {
 							onDone  :  'pr_addRestaurant');
 					}
 					Set s_loc_actions {
+						Comment: "Local actions for add restaurant dialog";
 						InitialData: {
 							{'Cancel', 'OK'}
 						}
 					}
 				}
 				Procedure pr_addRestaurant {
+					Comment: "Add a new restaurant if OK is clicked";
 					Arguments: sp_arg_action;
 					Body: {
+						! Create new restaurant element if confirmed
 						if sp_arg_action = 'OK' then
 						    ep_selectedRestaurant := StringToElement(s_restaurants, sp_addEditElement, 1);
 						endif;
 					}
 					StringParameter sp_arg_action {
+						Comment: "Action argument chosen by the user";
 						Property: Input;
 					}
 				}
 				Procedure pr_openEditRestaurant {
+					Comment: "Open the dialog to edit a restaurant";
 					Body: {
+						! Populate the parameter with current selection
 						sp_addEditElement := ep_selectedRestaurant;
 						
+						! Open WebUI dialog
 						webui::OpenDialogPage(
 							pageId  :  'crud', 
 							title   :  "Edit Restaurant", 
@@ -489,35 +584,46 @@ Model Main_EmployeeScheduling {
 							onDone  :  'pr_editRestaurant');
 					}
 					Set s_loc_actions {
+						Comment: "Local actions for edit restaurant dialog";
 						InitialData: {
 							{'Cancel', 'OK'}
 						}
 					}
 				}
 				Procedure pr_editRestaurant {
+					Comment: "Rename the selected restaurant";
 					Arguments: sp_arg_action;
 					Body: {
+						! Rename the restaurant element if confirmed
 						if sp_arg_action = 'OK' then
 						    SetElementRename(s_restaurants, ep_selectedRestaurant, sp_addEditElement);
 						endif;
 					}
 					StringParameter sp_arg_action {
+						Comment: "Action argument chosen by the user";
 						Property: Input;
 					}
 				}
 				Procedure pr_deleteRestaurant {
+					Comment: "Delete the selected restaurant";
 					Body: {
+						! Remove selected restaurant from the set
 						s_restaurants -= ep_selectedRestaurant;
 						
+						! Select the very first restaurant that remains
 						ep_selectedRestaurant := first(i_rest);
 					}
 				}
 			}
 			Section CRUD_Employee {
+				Comment: "CRUD operations for Employee entity";
 				Procedure pr_openAddEmployee {
+					Comment: "Open the dialog to add an employee";
 					Body: {
+						! Empty the add/edit element parameter
 						empty sp_addEditElement;
 						
+						! Open WebUI dialog
 						webui::OpenDialogPage(
 							pageId  :  'crud', 
 							title   :  "Add Employee", 
@@ -525,26 +631,33 @@ Model Main_EmployeeScheduling {
 							onDone  :  'pr_addEmployee');
 					}
 					Set s_loc_actions {
+						Comment: "Local actions for add employee dialog";
 						InitialData: {
 							{'Cancel', 'OK'}
 						}
 					}
 				}
 				Procedure pr_addEmployee {
+					Comment: "Add a new employee if OK is clicked";
 					Arguments: sp_arg_action;
 					Body: {
+						! Create new employee element if confirmed
 						if sp_arg_action = 'OK' then
 						    ep_selectedEmployee := StringToElement(s_Employees, sp_addEditElement, 1);
 						endif;
 					}
 					StringParameter sp_arg_action {
+						Comment: "Action argument chosen by the user";
 						Property: Input;
 					}
 				}
 				Procedure pr_openEditEmployee {
+					Comment: "Open the dialog to edit an employee";
 					Body: {
+						! Populate the parameter with current selection
 						sp_addEditElement := ep_selectedEmployee;
 						
+						! Open WebUI dialog
 						webui::OpenDialogPage(
 							pageId  :  'crud', 
 							title   :  "Edit Employee", 
@@ -552,35 +665,46 @@ Model Main_EmployeeScheduling {
 							onDone  :  'pr_editEmployee');
 					}
 					Set s_loc_actions {
+						Comment: "Local actions for edit employee dialog";
 						InitialData: {
 							{'Cancel', 'OK'}
 						}
 					}
 				}
 				Procedure pr_editEmployee {
+					Comment: "Rename the selected employee";
 					Arguments: sp_arg_action;
 					Body: {
+						! Rename the employee element if confirmed
 						if sp_arg_action = 'OK' then
 						    SetElementRename(s_Employees, ep_selectedEmployee, sp_addEditElement);
 						endif;
 					}
 					StringParameter sp_arg_action {
+						Comment: "Action argument chosen by the user";
 						Property: Input;
 					}
 				}
 				Procedure pr_deleteEmployee {
+					Comment: "Delete the selected employee";
 					Body: {
+						! Remove selected employee from the set
 						s_Employees -= ep_selectedEmployee;
 						
+						! Select the very first employee that remains
 						ep_selectedEmployee := first(i_empl);
 					}
 				}
 			}
 			Section CRUD_Shift {
+				Comment: "CRUD operations for Shift entity";
 				Procedure pr_openAddShift {
+					Comment: "Open the dialog to add a shift";
 					Body: {
+						! Empty the add/edit element parameter
 						empty sp_addEditElement;
 						
+						! Open WebUI dialog
 						webui::OpenDialogPage(
 							pageId  :  'crud', 
 							title   :  "Add Shift", 
@@ -588,26 +712,33 @@ Model Main_EmployeeScheduling {
 							onDone  :  'pr_addShift');
 					}
 					Set s_loc_actions {
+						Comment: "Local actions for add shift dialog";
 						InitialData: {
 							{'Cancel', 'OK'}
 						}
 					}
 				}
 				Procedure pr_addShift {
+					Comment: "Add a new shift if OK is clicked";
 					Arguments: sp_arg_action;
 					Body: {
+						! Create new shift element if confirmed
 						if sp_arg_action = 'OK' then
 						    ep_selectedShift := StringToElement(s_Shifts, sp_addEditElement, 1);
 						endif;
 					}
 					StringParameter sp_arg_action {
+						Comment: "Action argument chosen by the user";
 						Property: Input;
 					}
 				}
 				Procedure pr_openEditShift {
+					Comment: "Open the dialog to edit a shift";
 					Body: {
+						! Populate the parameter with current selection
 						sp_addEditElement := ep_selectedShift;
 						
+						! Open WebUI dialog
 						webui::OpenDialogPage(
 							pageId  :  'crud', 
 							title   :  "Edit Shift", 
@@ -615,35 +746,46 @@ Model Main_EmployeeScheduling {
 							onDone  :  'pr_editShift');
 					}
 					Set s_loc_actions {
+						Comment: "Local actions for edit shift dialog";
 						InitialData: {
 							{'Cancel', 'OK'}
 						}
 					}
 				}
 				Procedure pr_editShift {
+					Comment: "Rename the selected shift";
 					Arguments: sp_arg_action;
 					Body: {
+						! Rename the shift element if confirmed
 						if sp_arg_action = 'OK' then
 						    SetElementRename(s_Shifts, ep_selectedShift, sp_addEditElement);
 						endif;
 					}
 					StringParameter sp_arg_action {
+						Comment: "Action argument chosen by the user";
 						Property: Input;
 					}
 				}
 				Procedure pr_deleteShift {
+					Comment: "Delete the selected shift";
 					Body: {
+						! Remove selected shift from the set
 						s_Shifts -= ep_selectedShift;
 						
+						! Select the very first shift that remains
 						ep_selectedShift := first(i_sh);
 					}
 				}
 			}
 			Section CRUD_Skill {
+				Comment: "CRUD operations for Skill entity";
 				Procedure pr_openAddSkill {
+					Comment: "Open the dialog to add a skill";
 					Body: {
+						! Empty the add/edit element parameter
 						empty sp_addEditElement;
 						
+						! Open WebUI dialog
 						webui::OpenDialogPage(
 							pageId  :  'crud', 
 							title   :  "Add Skill", 
@@ -651,26 +793,33 @@ Model Main_EmployeeScheduling {
 							onDone  :  'pr_addSkill');
 					}
 					Set s_loc_actions {
+						Comment: "Local actions for add skill dialog";
 						InitialData: {
 							{'Cancel', 'OK'}
 						}
 					}
 				}
 				Procedure pr_addSkill {
+					Comment: "Add a new skill if OK is clicked";
 					Arguments: sp_arg_action;
 					Body: {
+						! Create new skill element if confirmed
 						if sp_arg_action = 'OK' then
 						    ep_selectedSkill := StringToElement(s_Skills, sp_addEditElement, 1);
 						endif;
 					}
 					StringParameter sp_arg_action {
+						Comment: "Action argument chosen by the user";
 						Property: Input;
 					}
 				}
 				Procedure pr_openEditSkill {
+					Comment: "Open the dialog to edit a skill";
 					Body: {
+						! Populate the parameter with current selection
 						sp_addEditElement := ep_selectedSkill;
 						
+						! Open WebUI dialog
 						webui::OpenDialogPage(
 							pageId  :  'crud', 
 							title   :  "Edit Skill", 
@@ -678,41 +827,52 @@ Model Main_EmployeeScheduling {
 							onDone  :  'pr_editSkill');
 					}
 					Set s_loc_actions {
+						Comment: "Local actions for edit skill dialog";
 						InitialData: {
 							{'Cancel', 'OK'}
 						}
 					}
 				}
 				Procedure pr_editSkill {
+					Comment: "Rename the selected skill";
 					Arguments: sp_arg_action;
 					Body: {
+						! Rename the skill element if confirmed
 						if sp_arg_action = 'OK' then
 						    SetElementRename(s_Skills, ep_selectedSkill, sp_addEditElement);
 						endif;
 					}
 					StringParameter sp_arg_action {
+						Comment: "Action argument chosen by the user";
 						Property: Input;
 					}
 				}
 				Procedure pr_deleteSkill {
+					Comment: "Delete the selected skill";
 					Body: {
+						! Remove selected skill from the set
 						s_Skills -= ep_selectedSkill;
 						
+						! Select the very first skill that remains
 						ep_selectedSkill := first(i_sk);
 					}
 				}
 			}
 		}
 		Section Case_Manager_Procedures {
+			Comment: "Procedures for managing scenario saving and loading";
 			StringParameter sp_def_uploadLabel {
+				Comment: "Label for uploading scenarios";
 				Definition: "Load Scenario As Active";
 			}
 			StringParameter sp_def_downloadLabel {
+				Comment: "Label for downloading scenarios";
 				Definition: "Save Scenario As";
 			}
 			Procedure pr_saveCaseAs {
+				Comment: "Save the current scenario to a file";
 				Body: {
-					! if the temp folder exists, deleate and create new
+					! if the temp folder exists, delete and create new
 					if DirectoryExists("temp_data") then
 					    DirectoryDelete("temp_data");
 					endif;
@@ -725,33 +885,37 @@ Model Main_EmployeeScheduling {
 					! we store the location of the file in string parameter FinalLocation
 					sp_loc_IOFilePath  := webui::GetIOFilePath(sp_loc_tempData);
 					
-					!this is required so it works on the cloud
+					! this is required so it works on the cloud
 					FileCopy(sp_loc_tempData, sp_loc_IOFilePath);
 					
 					! checking if the previous write statement was successful or not
 					if FileExists(sp_loc_IOFilePath) then
-					
 					    webui::RequestFileDownload(fname : sp_loc_IOFilePath);
 					    webui::ShowMessage('info',"All perfect!");
-					
 					else 
-					
 					    webui::ShowMessage('error',"Something went wrong when creating the file.");
-					
 					endif;
 				}
-				StringParameter sp_loc_tempData;
-				StringParameter sp_loc_IOFilePath;
+				StringParameter sp_loc_tempData {
+					Comment: "Temporary data file name";
+				}
+				StringParameter sp_loc_IOFilePath {
+					Comment: "Location of the generated file";
+				}
 			}
 			Procedure pr_requestUploadCase {
+				Comment: "Request the user to upload a scenario file";
 				Body: {
+					! Open file upload dialog and handle completion
 					webui::RequestFileUpload(onDone : 'pr_uploadSavedScenario');
 				}
 			}
 			Procedure pr_uploadSavedScenario {
+				Comment: "Process the uploaded scenario file";
 				Arguments: (fname,StatusCode,StatusDescription);
 				Body: {
 					block 
+					! Retrieve the actual path of the uploaded file
 					sp_loc_fileLocation := webui::GetIOFilePath(fname);
 					
 					! load the scenario
@@ -763,18 +927,17 @@ Model Main_EmployeeScheduling {
 					endif;
 					
 					onerror ep_err do
-					
-					    !displaying a custom error message
+					    ! displaying a custom error message
 					    webui::ShowMessage('error', "Error when reading file " + errh::Message(ep_err));
-					
 					    errh::MarkAsHandled(ep_err) ;
-					
 					endblock;
 				}
 				ElementParameter ep_err {
+					Comment: "Error handling parameter";
 					Range: errh::PendingErrors;
 				}
 				StringParameter fname {
+					Comment: "Uploaded file name";
 					Property: Input;
 				}
 				Parameter StatusCode {
@@ -785,13 +948,19 @@ Model Main_EmployeeScheduling {
 					Property: Output;
 					Comment: "this exact name is expected";
 				}
-				StringParameter sp_loc_fileLocation;
+				StringParameter sp_loc_fileLocation {
+					Comment: "Location of the uploaded file";
+				}
 			}
 		}
 		Section Pages {
+			Comment: "Definitions associated with WebUI pages";
 			Section Master_Page {
+				Comment: "Declarations for Master Page";
 				DeclarationSection Master_PageAction {
+					Comment: "Item actions for Master Page grids";
 					StringParameter sp_restaurantItemActions {
+						Comment: "Widget item actions for restaurants";
 						IndexDomain: (webui::indexWidgetItemActionSpec,webui::indexPageExtension,webui::indexWidgetActionSpec);
 						Definition: {
 							data 
@@ -822,6 +991,7 @@ Model Main_EmployeeScheduling {
 						}
 					}
 					StringParameter sp_employeeItemActions {
+						Comment: "Widget item actions for employees";
 						IndexDomain: (webui::indexWidgetItemActionSpec,webui::indexPageExtension,webui::indexWidgetActionSpec);
 						Definition: {
 							data 
@@ -852,6 +1022,7 @@ Model Main_EmployeeScheduling {
 						}
 					}
 					StringParameter sp_shiftItemActions {
+						Comment: "Widget item actions for shifts";
 						IndexDomain: (webui::indexWidgetItemActionSpec,webui::indexPageExtension,webui::indexWidgetActionSpec);
 						Definition: {
 							data 
@@ -876,6 +1047,7 @@ Model Main_EmployeeScheduling {
 						}
 					}
 					StringParameter sp_skillItemActions {
+						Comment: "Widget item actions for skills";
 						IndexDomain: (webui::indexWidgetItemActionSpec,webui::indexPageExtension,webui::indexWidgetActionSpec);
 						Definition: {
 							data 
@@ -889,9 +1061,13 @@ Model Main_EmployeeScheduling {
 					}
 				}
 			}
-			Section Transactional_Page;
+			Section Transactional_Page {
+				Comment: "Transactional Page declarations";
+			}
 			Section Results_Page {
+				Comment: "Definitions associated with the Results Page";
 				StringParameter sp_resultsSidePanel {
+					Comment: "Side panel mapping for results page";
 					IndexDomain: (webui::indexPageExtension,webui::indexSidePanelSpec);
 					Definition: {
 						data 
@@ -902,48 +1078,61 @@ Model Main_EmployeeScheduling {
 					}
 				}
 				Parameter p_fulfilledDemand {
+					Comment: "Calculated fulfilled demand";
 					IndexDomain: (i_rest, i_sh, i_sk);
 					Range: integer;
 					Definition: p_demand(i_rest, i_sh, i_sk) - v_unfulfilled(i_rest, i_sh, i_sk);
 					webui::AnnotationsIdentifier: sp_fulfilledDemandAnnotation;
 				}
 				StringParameter sp_demandFulfillmentTitle {
+					Comment: "Title for demand fulfillment chart";
 					Definition: "Demand Fulfillment - " + ep_selectedRestaurant;
 				}
 				StringParameter sp_fulfilledDemandAnnotation {
+					Comment: "Annotation for fulfilled demand UI display";
 					Definition: "not-red-chart";
 				}
 				StringParameter sp_unfulfilledDemandAnnotation {
+					Comment: "Annotation for unfulfilled demand UI display";
 					Definition: "red-chart";
 				}
 			}
 			Section Gantt_Page {
+				Comment: "Definitions associated with the Gantt chart page";
 				Parameter p_restaurantStartTime {
+					Comment: "Start time for restaurant tasks";
 					IndexDomain: (i_rest, i_empl, i_sh, i_sk) | p_assignment(i_rest,i_empl,i_sh,i_sk);
 					Definition: p_startTime(i_sh);
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				Parameter p_restaurantDuration {
+					Comment: "Duration for restaurant tasks";
 					IndexDomain: (i_rest,i_empl,i_sh,i_sk) | p_assignment(i_rest,i_empl,i_sh,i_sk);
 					Definition: p_duration(i_sh);
 					webui::FlagsIdentifier: sp_readOnlyFlag;
 				}
 				StringParameter sp_restaurantTitle {
+					Comment: "Title for restaurant Gantt chart";
 					Definition: ep_selectedRestaurant + " Schedule";
 				}
 				StringParameter sp_employeeTitle {
+					Comment: "Title for employee Gantt chart";
 					Definition: ep_selectedEmployee + " Schedule";
 				}
 			}
 		}
 		Section FlagsIdentifier {
+			Comment: "Definitions for UI flags control";
 			StringParameter sp_readOnlyFlag {
+				Comment: "Flag to mark UI elements read-only";
 				Definition: "readonly";
 			}
 		}
 	}
 	Section Database_Connection {
+		Comment: "Database connection parameters and procedures";
 		StringParameter sp_def_connectionString {
+			Comment: "Definition of the database connection string";
 			Definition: {
 				SQLCreateConnectionString (
 					DatabaseInterface              :  'odbc',
@@ -956,6 +1145,7 @@ Model Main_EmployeeScheduling {
 			}
 		}
 		StringParameter sp_def_driverName {
+			Comment: "Name of the ODBC driver for SQLite";
 			Definition: {
 				if pro::GetPROEndPoint() or not ProjectDeveloperMode() then
 				    "SQLite3"
@@ -965,8 +1155,9 @@ Model Main_EmployeeScheduling {
 			}
 		}
 		Procedure pr_readAll {
+			Comment: "Read all tables from the database";
 			Body: {
-				!check if connection holds
+				! check if connection holds
 				p_loc_testConnection := TestDataSource(sp_def_connectionString);
 				
 				if p_loc_testConnection then
@@ -988,13 +1179,20 @@ Model Main_EmployeeScheduling {
 				                onDone  :  'webui::NoOp1');
 				endif;
 			}
-			Parameter p_loc_testConnection;
-			StringParameter sp_loc_driverName;
-			Set s_loc_actions;
+			Parameter p_loc_testConnection {
+				Comment: "Local parameter to test DB connection";
+			}
+			StringParameter sp_loc_driverName {
+				Comment: "Local string parameter for driver name";
+			}
+			Set s_loc_actions {
+				Comment: "Local actions set for webui dialog";
+			}
 		}
 		Procedure pr_writeAll {
+			Comment: "Write all data to the database";
 			Body: {
-				!check if connection holds
+				! check if connection holds
 				p_loc_testConnection := TestDataSource(sp_def_connectionString);
 				
 				if p_loc_testConnection then
@@ -1016,12 +1214,20 @@ Model Main_EmployeeScheduling {
 				            onDone  :  'webui::NoOp1');
 				endif;
 			}
-			Parameter p_loc_testConnection;
-			StringParameter sp_loc_driverName;
-			Set s_loc_actions;
+			Parameter p_loc_testConnection {
+				Comment: "Local parameter to test DB connection";
+			}
+			StringParameter sp_loc_driverName {
+				Comment: "Local string parameter for driver name";
+			}
+			Set s_loc_actions {
+				Comment: "Local actions set for webui dialog";
+			}
 		}
 		Section DB_Skills {
+			Comment: "Database mapping for skills";
 			DatabaseTable db_readSkills {
+				Comment: "Database table mapping for skills";
 				DataSource: sp_def_connectionString;
 				TableName: "skill";
 				Mapping: {
@@ -1030,21 +1236,28 @@ Model Main_EmployeeScheduling {
 				}
 			}
 			Procedure pr_readSkillDB {
+				Comment: "Read skills data from the database";
 				Body: {
+					! Empty the skills data
 					empty Skills;
 					
+					! Read from the database table
 					read from table db_readSkills;
 				}
 			}
 			Procedure pr_writeSkillDB {
+				Comment: "Write skills data to the database";
 				Body: {
+					! Write skills data to the table
 					write p_activeSkill(i_sk)
 					    to table db_readSkills in dense mode;
 				}
 			}
 		}
 		Section DB_Shifts {
+			Comment: "Database mapping for shifts";
 			DatabaseTable db_readShifts {
+				Comment: "Database table mapping for shifts";
 				DataSource: sp_def_connectionString;
 				TableName: "shift";
 				Mapping: {
@@ -1055,13 +1268,18 @@ Model Main_EmployeeScheduling {
 				}
 			}
 			Procedure pr_readShiftDB {
+				Comment: "Read shifts data from the database";
 				Body: {
+					! Empty the shifts data
 					empty Shifts;
+					! Read from the database table
 					read from table db_readShifts;
 				}
 			}
 			Procedure pr_writeShiftDB {
+				Comment: "Write shifts data to the database";
 				Body: {
+					! Write shifts data to the table
 					write p_activeShift(i_sh), 
 					        p_startTime(i_sh),
 					        p_duration(i_sh)
@@ -1070,7 +1288,9 @@ Model Main_EmployeeScheduling {
 			}
 		}
 		Section DB_Employee {
+			Comment: "Database mapping for employees";
 			DatabaseTable db_readEmployees {
+				Comment: "Database table mapping for employees";
 				DataSource: sp_def_connectionString;
 				TableName: "employee";
 				Mapping: {
@@ -1080,14 +1300,19 @@ Model Main_EmployeeScheduling {
 				}
 			}
 			Procedure pr_readEmployeeDB {
+				Comment: "Read employee data from the database";
 				Body: {
+					! Empty the employee data
 					empty Employees;
 					
+					! Read from the database table
 					read from table db_readEmployees;
 				}
 			}
 			Procedure pr_writeEmployeeDB {
+				Comment: "Write employee data to the database";
 				Body: {
+					! Write employee data to the table
 					write sp_employeeDescription(i_empl), 
 					        p_activeEmployee(i_empl) 
 					    to table db_readEmployees in dense mode;
@@ -1095,7 +1320,9 @@ Model Main_EmployeeScheduling {
 			}
 		}
 		Section DB_Restaurant {
+			Comment: "Database mapping for restaurants";
 			DatabaseTable db_readRestaurants {
+				Comment: "Database table mapping for restaurants";
 				DataSource: sp_def_connectionString;
 				TableName: "restaurant";
 				Mapping: {
@@ -1105,14 +1332,19 @@ Model Main_EmployeeScheduling {
 				}
 			}
 			Procedure pr_readRestaurantDB {
+				Comment: "Read restaurant data from the database";
 				Body: {
+					! Empty the restaurant data
 					empty Restaurants;
 					
+					! Read from the database table
 					read from table db_readRestaurants;
 				}
 			}
 			Procedure pr_writeRestaurantDB {
+				Comment: "Write restaurant data to the database";
 				Body: {
+					! Write restaurant data to the table
 					write sp_restaurantDescription(i_rest), 
 					        p_activeRestaurant(i_rest)
 					    to table db_readRestaurants in dense mode;
@@ -1120,7 +1352,9 @@ Model Main_EmployeeScheduling {
 			}
 		}
 		Section DB_Employee_Shift {
+			Comment: "Database mapping for employee shifts";
 			DatabaseTable db_readEmployeeShifts {
+				Comment: "Database table mapping for employee shifts";
 				DataSource: sp_def_connectionString;
 				TableName: "employee_shift";
 				Mapping: {
@@ -1130,21 +1364,28 @@ Model Main_EmployeeScheduling {
 				}
 			}
 			Procedure pr_readEmployeeShiftsDB {
+				Comment: "Read employee shifts data from the database";
 				Body: {
+					! Empty the employee shift data
 					empty Employee_Shift;
 					
+					! Read from the database table
 					read from table db_readEmployeeShifts;
 				}
 			}
 			Procedure pr_writeEmployeeShiftsDB {
+				Comment: "Write employee shifts data to the database";
 				Body: {
+					! Write employee shift data to the table
 					write p_employeeDoesShift(i_empl, i_sh)
 					    to table db_readEmployeeShifts in dense mode;
 				}
 			}
 		}
 		Section DB_Employee_Skill {
+			Comment: "Database mapping for employee skills";
 			DatabaseTable db_readEmployeeSkills {
+				Comment: "Database table mapping for employee skills";
 				DataSource: sp_def_connectionString;
 				TableName: "employee_skill";
 				Mapping: {
@@ -1155,14 +1396,19 @@ Model Main_EmployeeScheduling {
 				}
 			}
 			Procedure pr_readEmployeeSkillDB {
+				Comment: "Read employee skills data from the database";
 				Body: {
+					! Empty the employee skill data
 					empty Employee_Skill;
 					
+					! Read from the database table
 					read from table db_readEmployeeSkills;
 				}
 			}
 			Procedure pr_writeEmployeeSkillDB {
+				Comment: "Write employee skills data to the database";
 				Body: {
+					! Write employee skill data to the table
 					write p_employeeHasSkill(i_empl, i_sk),
 					        p_employeeSkillPreference(i_empl, i_sk)
 					    to table db_readEmployeeSkills in dense mode;
@@ -1170,7 +1416,9 @@ Model Main_EmployeeScheduling {
 			}
 		}
 		Section DB_Demand {
+			Comment: "Database mapping for demand data";
 			DatabaseTable db_readDemands {
+				Comment: "Database table mapping for demand data";
 				DataSource: sp_def_connectionString;
 				TableName: "demand";
 				Mapping: {
@@ -1181,14 +1429,19 @@ Model Main_EmployeeScheduling {
 				}
 			}
 			Procedure pr_readDemandDB {
+				Comment: "Read demand data from the database";
 				Body: {
+					! Empty the demand data
 					empty Demand;
 					
+					! Read from the database table
 					read from table db_readDemands;
 				}
 			}
 			Procedure pr_writeDemandDB {
+				Comment: "Write demand data to the database";
 				Body: {
+					! Write demand data to the table
 					write p_demand(i_rest, i_sh, i_sk)
 					    to table db_readDemands in dense mode;
 				}
@@ -1196,30 +1449,51 @@ Model Main_EmployeeScheduling {
 		}
 	}
 	Section Unit_Test {
+		Comment: "Section for unit testing functionalities";
 		Procedure pr_loadUnitTestData {
+			Comment: "Load unit test data";
 			Body: {
+				! Clear main model data
 				empty Main_EmployeeScheduling;
 				
+				! Load case file for unit test
 				CaseFileLoad("unit-test/unit-test.data");
 			}
 		}
 	}
 	Section Application_initialization_and_termination {
-		Procedure MainInitialization;
-		Procedure PostMainInitialization {
+		Comment: "Application lifecycle procedures";
+		Procedure MainInitialization {
+			Comment: "Main initialization procedure";
 			Body: {
+				! No body content needed for initialization by default
+			}
+		}
+		Procedure PostMainInitialization {
+			Comment: "Post main initialization procedure";
+			Body: {
+				! Clear UI selection parameters
 				ep_selectedRestaurant := '';
 				ep_selectedEmployee := '';
 			}
 		}
-		Procedure MainExecution;
-		Procedure PreMainTermination {
+		Procedure MainExecution {
+			Comment: "Main execution procedure";
 			Body: {
+				! Empty main execution body
+			}
+		}
+		Procedure PreMainTermination {
+			Comment: "Pre main termination procedure";
+			Body: {
+				! Return 1 to allow termination
 				return 1 ;
 			}
 		}
 		Procedure MainTermination {
+			Comment: "Main termination procedure";
 			Body: {
+				! Return 1 to allow termination
 				return 1;
 			}
 		}
